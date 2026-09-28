@@ -1,0 +1,3178 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GEKKO-DAN SYSTEM｜v24.44</title>
+<style>
+:root{
+  --bg:#050816;--panel:#0c1230e8;--panel2:#111940;--text:#f8f4e6;--muted:#b8bfd4;
+  --gold:#f0d27a;--gold2:#fff1b4;--line:#f0d27a55;--danger:#ff7474;--ok:#92e3a9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic UI","Noto Sans JP",sans-serif;
+  background:
+    radial-gradient(circle at 50% -3%,#fff5c7 0 2.8%,#d8c374 3%,#56608d 9%,#1c234a 20%,transparent 35%),
+    radial-gradient(circle at 15% 10%,#202951 0,transparent 28%),
+    linear-gradient(#070b1c,#040612 70%);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.23;
+  background-image:radial-gradient(#fff 0.7px,transparent 0.8px);
+  background-size:25px 25px;
+}
+.shell{width:min(820px,100%);margin:auto;padding:22px 16px 60px}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  font-size:.72rem;letter-spacing:.16em;color:var(--gold);margin-bottom:12px
+}
+.pill{border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0a1027aa}
+.card{
+  background:linear-gradient(180deg,#10173ae8,#080d22f2);
+  border:1px solid var(--line);border-radius:22px;padding:clamp(20px,5vw,34px);
+  box-shadow:0 25px 80px #0008;backdrop-filter:blur(9px)
+}
+.screen{display:none}.screen.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.brand{text-align:center;color:var(--gold);letter-spacing:.24em;font-weight:900;font-size:.74rem}
+h1{font-size:clamp(1.75rem,7vw,3.35rem);line-height:1.12;text-align:center;margin:.34em 0 .16em;letter-spacing:.045em}
+h2{font-size:1.15rem;margin:0 0 10px}
+.sub{text-align:center;color:var(--muted);margin-bottom:24px}
+.moonstage{text-align:center;font-size:3.2rem;filter:drop-shadow(0 0 15px #efd57666);margin:14px 0}
+.progress{height:6px;background:#ffffff12;border-radius:99px;overflow:hidden;margin:14px 0 24px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#bba45a,#fff0ab);transition:.45s}
+.dialogue{border-left:3px solid var(--gold);padding:12px 15px;margin:15px 0;background:#ffffff08;border-radius:0 12px 12px 0;line-height:1.7}
+.dialogue b{color:var(--gold2)}
+label{display:block;margin:15px 0 7px;font-weight:800}
+input,select{
+  width:100%;padding:14px 15px;border-radius:12px;border:1px solid #ffffff26;background:#080d22;color:#fff;font-size:16px;outline:none
+}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #f0d27a1e}
+button{
+  width:100%;padding:14px 16px;margin-top:15px;border:0;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;
+  color:#171207;background:linear-gradient(#fff0ac,#caaa4a)
+}
+button.alt{background:#ffffff0c;color:var(--text);border:1px solid #ffffff24}
+button.small{width:auto;padding:9px 12px;font-size:.86rem;margin:4px 5px 4px 0}
+.status{min-height:25px;text-align:center;font-weight:800;margin-top:10px}.error{color:#ffabab}.ok{color:var(--ok)}
+.challenge{
+  border:1px dashed var(--line);background:#0004;border-radius:16px;padding:18px;margin:16px 0;text-align:center;line-height:1.75
+}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--gold);font-size:.72rem;letter-spacing:.1em}
+.grid15{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;max-width:330px;margin:15px auto}
+.cell{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fffdf2,#e8d6a5 70%,#bca76c);color:#29220d;font-weight:900;box-shadow:0 2px 8px #0006}
+.triangle{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0}
+.row{display:flex;gap:8px}
+.dango{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fffef4,#e6d6aa 70%,#bdab79);color:#211c10;font-weight:900;box-shadow:0 3px 9px #0007}
+.arrow{color:var(--gold);font-weight:900;letter-spacing:.2em;text-align:center;font-size:.85rem}
+.log{
+  margin-top:18px;border-top:1px solid #ffffff18;padding-top:14px
+}
+.logitem{padding:8px 0;border-bottom:1px solid #ffffff0f;color:#dce0ec;font-size:.9rem}
+.notice{padding:12px;border-radius:12px;background:#ff6e6e12;border:1px solid #ff85853b;color:#ffd1d1;margin:12px 0}
+.clear{text-align:center}.clear .huge{font-size:5rem}
+.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;font-size:1.35rem;padding:15px;border:1px solid var(--line);border-radius:12px;background:#050918;margin:12px 0;text-align:center;color:var(--gold2)}
+.footer{text-align:center;color:#7f879f;font-size:.74rem;margin-top:14px}
+@media(max-width:520px){.dango{width:42px;height:42px}.card{border-radius:18px}.topbar{letter-spacing:.09em}}
+
+    .sudoku{display:grid;grid-template-columns:repeat(9,1fr);max-width:430px;margin:18px auto;border:2px solid #ffffff88}
+    .sudoku div{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid #ffffff22;font-weight:800;background:#ffffff08}
+    .sudoku div:nth-child(3n){border-right:2px solid #ffffff66}
+    .sudoku div:nth-child(9n){border-right:0}
+    .sudoku div:nth-child(n+19):nth-child(-n+27),.sudoku div:nth-child(n+46):nth-child(-n+54){border-bottom:2px solid #ffffff66}
+    .kana-guide{margin:16px 0;padding:14px;border:1px solid #ffffff22;border-radius:12px;line-height:1.9;letter-spacing:.08em}
+    .moon-grid{display:grid;gap:10px;margin:18px 0}.moon-clue{padding:12px;border:1px solid #ffffff22;border-radius:12px;overflow:auto;white-space:nowrap}
+
+
+/* v7 visual polish */
+:root{--moon:#f6dc78;--moon2:#fff4bd;--danger:#ff6f73}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:
+radial-gradient(circle at 80% 8%,rgba(246,220,120,.10),transparent 24%),
+radial-gradient(circle at 15% 85%,rgba(112,84,180,.10),transparent 26%)}
+.screen{animation:screenIn .38s ease both}
+@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tag{letter-spacing:.14em}
+.challenge{position:relative;overflow:hidden}
+.challenge:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+box-shadow:inset 0 0 30px rgba(246,220,120,.025)}
+button{transition:transform .12s ease,filter .12s ease,box-shadow .12s ease}
+button:active{transform:scale(.985)}
+input:focus,select:focus{outline:2px solid rgba(246,220,120,.6);outline-offset:2px}
+.status.ok{animation:unlockPulse .55s ease}
+@keyframes unlockPulse{0%{transform:scale(.98)}55%{transform:scale(1.025)}100%{transform:scale(1)}}
+.line-status{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;
+border:1px solid #ffffff18;border-radius:12px;margin:7px 0;background:#ffffff06}
+.line-status b{color:var(--moon2)} .restored{color:#9ff0b0;font-weight:900;letter-spacing:.08em}
+.final-warning{border:1px solid rgba(255,111,115,.45);background:rgba(255,111,115,.08);
+padding:13px;border-radius:14px;margin:14px 0;font-weight:800}
+@media(max-width:600px){
+  .screen{padding-left:14px;padding-right:14px}
+  h1{font-size:clamp(1.7rem,8vw,2.45rem)}
+  .challenge{padding:15px}
+  .sudoku{font-size:.78rem}
+  .moon-clue{font-size:.88rem}
+}
+
+
+/* v8 restoration sequence */
+.restore-overlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+background:rgba(3,6,18,.94);backdrop-filter:blur(7px);padding:22px}
+.restore-overlay.show{display:flex;animation:restoreFade .25s ease both}
+.restore-card{width:min(620px,94vw);text-align:center;padding:28px 22px;border-radius:22px;
+border:1px solid rgba(246,220,120,.45);background:linear-gradient(180deg,rgba(26,31,60,.98),rgba(8,12,30,.98));
+box-shadow:0 0 60px rgba(246,220,120,.13)}
+.restore-icon{font-size:3.4rem;animation:moonPulse 1s ease infinite alternate}
+.restore-kicker{font-size:.78rem;letter-spacing:.2em;color:#b9c1dd;margin-top:10px}
+.restore-title{font-size:clamp(1.8rem,7vw,3rem);font-weight:1000;color:var(--moon2);margin:8px 0}
+.restore-sub{color:#d8def4;line-height:1.7}
+.restore-bar{height:9px;background:#ffffff12;border-radius:99px;overflow:hidden;margin:20px 0 8px}
+.restore-fill{height:100%;width:0;background:linear-gradient(90deg,#9277d6,#f6dc78);border-radius:99px}
+.restore-overlay.show .restore-fill{animation:fillRestore 1.15s ease forwards}
+.restore-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#9ff0b0;letter-spacing:.08em;font-weight:900}
+@keyframes fillRestore{to{width:100%}} @keyframes restoreFade{from{opacity:0}to{opacity:1}}
+@keyframes moonPulse{from{transform:scale(.95);filter:drop-shadow(0 0 4px rgba(246,220,120,.15))}
+to{transform:scale(1.05);filter:drop-shadow(0 0 18px rgba(246,220,120,.5))}}
+
+
+/* v9 individual restoration messages + final full moon */
+.final-moon-seq{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;
+background:radial-gradient(circle at center,#171b39 0,#060914 62%,#02030a 100%);text-align:center;padding:24px}
+.final-moon-seq.show{display:flex;animation:restoreFade .35s ease both}
+.final-moon-wrap{width:min(720px,95vw)}
+.final-phase{font-size:clamp(4rem,22vw,9rem);line-height:1;filter:drop-shadow(0 0 28px rgba(246,220,120,.35))}
+.final-phase.animate{animation:finalMoon 3.2s steps(1,end) forwards}
+@keyframes finalMoon{
+0%,19%{opacity:1}20%,39%{opacity:.98}40%,59%{opacity:1}60%,79%{opacity:.98}80%,100%{opacity:1}
+}
+.final-system-title{font-size:clamp(1.6rem,7vw,3.1rem);font-weight:1000;color:var(--moon2);margin:18px 0 8px}
+.final-percent{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#9ff0b0;font-size:1.05rem;font-weight:900;letter-spacing:.08em}
+.final-ending-note{color:#d7def4;line-height:1.8;margin-top:12px}
+
+
+/* v10 ending handoff */
+.ending-handoff{margin-top:22px;display:none;animation:screenIn .45s ease both}
+.ending-handoff.show{display:block}
+.ending-card{margin:18px auto 0;padding:18px;max-width:560px;border:1px solid rgba(246,220,120,.38);
+border-radius:18px;background:rgba(246,220,120,.06)}
+.ending-card h2{margin:.2em 0;color:var(--moon2)}
+.ending-button{margin-top:16px;min-height:52px}
+.ending-standby{font-size:.86rem;color:#b9c1dd;margin-top:10px;line-height:1.7}
+
+
+/* v11 completion receipt */
+.clear-receipt{margin-top:16px;padding:16px;border:1px solid rgba(159,240,176,.35);border-radius:16px;
+background:rgba(159,240,176,.06);text-align:left}
+.clear-receipt .receipt-title{font-size:.75rem;letter-spacing:.16em;color:#9ff0b0;font-weight:900}
+.clear-receipt .receipt-row{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid #ffffff10}
+.clear-receipt .receipt-row:last-child{border-bottom:0}
+.clear-receipt .receipt-row span:first-child{color:#aeb8d6}
+.clear-receipt .receipt-row b{word-break:break-word}
+
+
+/* v12 production-art direction */
+:root{
+  --panel:#07131b;--panel2:#0b1e28;--cyan:#50d7de;--cyan2:#a8fbff;
+  --gold:#f1c85b;--line:rgba(80,215,222,.24)
+}
+body{background:
+radial-gradient(circle at 50% -10%,rgba(80,215,222,.08),transparent 35%),
+linear-gradient(180deg,#02070b,#071018 60%,#03070b)}
+.screen{max-width:860px;margin:auto}
+.screen:before{content:"";display:block;height:3px;margin-bottom:12px;
+background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.55}
+.challenge,.notice,.dialogue,.clear-receipt{
+background:linear-gradient(180deg,rgba(12,31,41,.9),rgba(5,17,24,.94));
+border-color:var(--line)!important;box-shadow:inset 0 0 28px rgba(80,215,222,.025)}
+.challenge{clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.tag{color:var(--cyan2);text-shadow:0 0 12px rgba(80,215,222,.25)}
+h1{color:#f4f7fb;text-shadow:0 0 24px rgba(80,215,222,.12)}
+label{color:#c7dfe6}
+input,select{background:#06151d!important;border-color:rgba(80,215,222,.35)!important;color:#fff!important}
+button{background:linear-gradient(180deg,#0d6973,#07424b)!important;border:1px solid rgba(168,251,255,.5)!important;
+box-shadow:0 0 18px rgba(80,215,222,.09)}
+button.alt{background:linear-gradient(180deg,#252a3d,#161b2b)!important}
+.codebox{border-color:rgba(241,200,91,.38)!important;background:rgba(241,200,91,.05)!important;color:#ffe69a}
+.factory-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 12px;margin-bottom:12px;
+border:1px solid var(--line);border-radius:10px;background:#06151d;font-size:.72rem;letter-spacing:.11em;color:#9dc7cf}
+.factory-header b{color:var(--cyan2)}
+.puzzle-visual{margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:14px;
+background:radial-gradient(circle at 50% 20%,rgba(80,215,222,.05),transparent 45%),#041018}
+.puzzle-visual-title{font-size:.72rem;letter-spacing:.15em;color:var(--gold);margin-bottom:12px;font-weight:900}
+.moon-stage{display:flex;justify-content:center;align-items:center;gap:clamp(8px,3vw,24px);font-size:clamp(2rem,10vw,4rem);padding:14px 4px}
+.dango-stage{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;padding:12px}
+.dango-dot{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff,#d9d4c5 58%,#8d897d);
+color:#101010;font-weight:1000;box-shadow:0 3px 9px #0008}
+.security-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.security-cell{padding:14px 7px;text-align:center;border:1px solid var(--line);border-radius:9px;background:#071923}
+@media(max-width:600px){.factory-header{font-size:.62rem}.security-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+/* v13 puzzle-board polish */
+.puzzle-console{margin:16px 0;border:1px solid var(--line);border-radius:14px;background:#031018;overflow:hidden}
+.console-head{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:#0a2029;
+border-bottom:1px solid var(--line);font-size:.68rem;letter-spacing:.11em;color:#9bc8d0}
+.console-head b{color:var(--gold)}
+.console-body{padding:15px}
+.sport-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.sport-card{text-align:center;padding:13px 8px;border:1px solid var(--line);border-radius:11px;background:#071923}
+.sport-card .phase{font-size:2.25rem}.sport-card .sport{font-size:1.7rem;margin:5px 0}.sport-card b{font-size:.78rem}
+.icon-code-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.icon-code{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;padding:12px;
+border:1px solid var(--line);border-radius:11px;background:#071923}
+.icon-code .icons{font-size:1.8rem}.index-chip{min-width:32px;padding:5px 8px;border:1px solid rgba(241,200,91,.45);
+border-radius:8px;text-align:center;color:#ffe69a;font-weight:1000}
+.rainbow-console{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.rainbow-console div{padding:13px 4px;text-align:center;border:1px solid #ffffff18;border-radius:9px;font-weight:900}
+.memory-node{padding:13px;border:1px solid var(--line);border-radius:10px;background:#061923;margin:8px 0}
+.memory-node small{display:block;color:#8eb5be;letter-spacing:.08em;margin-bottom:5px}
+.final-dango{display:grid;grid-template-columns:repeat(5,44px);gap:7px;justify-content:center;margin:16px 0}
+.final-dango span{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 28%,#fff,#ddd7c5 60%,#8b8678);
+color:#111;font-weight:1000;box-shadow:0 3px 8px #0008}
+@media(max-width:600px){
+ .sport-cards{grid-template-columns:repeat(3,1fr)} .sport-card{padding:10px 4px}
+ .sport-card .phase{font-size:1.8rem}.sport-card .sport{font-size:1.4rem}
+ .rainbow-console{grid-template-columns:repeat(4,1fr)}
+ .icon-code-grid{grid-template-columns:1fr}
+}
+
+
+/* v14 resilience / mobile test support */
+.resume-banner{display:none;margin:12px auto 18px;max-width:860px;padding:12px 14px;border:1px solid rgba(241,200,91,.38);
+border-radius:12px;background:rgba(241,200,91,.06);color:#ffe9a6;line-height:1.6}
+.resume-banner.show{display:block}
+.utility-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin:8px 0 14px}
+.utility-btn{width:auto!important;padding:13px 22px!important;font-size:.95rem!important;font-weight:900!important;letter-spacing:.04em!important;color:#06131b!important;background:linear-gradient(180deg,#7dd3fc,#38bdf8)!important;border:2px solid #bae6fd!important;border-radius:999px!important;box-shadow:0 0 18px rgba(56,189,248,.45),0 4px 12px rgba(0,0,0,.35)!important;text-shadow:none!important;transition:transform .15s ease,filter .15s ease,box-shadow .15s ease!important}.utility-btn:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 0 25px rgba(56,189,248,.65),0 6px 16px rgba(0,0,0,.4)!important}
+.mobile-note{font-size:.72rem;color:#89a8b0;text-align:center;margin-top:10px}
+@media(max-width:600px){
+  body{padding-bottom:env(safe-area-inset-bottom)}
+  input,select,button{font-size:16px!important}
+  .utility-row{justify-content:center}
+  .restore-card{max-height:90vh;overflow:auto}
+}
+
+
+/* v14.1 start-screen bugfix */
+.screen:not(.active){display:none!important}
+.screen.active{display:block!important}
+#start .start-only{display:block}
+#start label{margin-top:14px}
+#start button{margin-top:20px}
+
+
+/* v14.4 definitive screen visibility fix */
+section.screen{display:none!important}
+section.screen.active{display:block!important}
+
+
+/* v14.5 native hidden safety */
+section.screen[hidden]{display:none!important}
+section.screen:not([hidden]){display:block!important}
+
+/* v14.6 structural visibility safety */
+section.screen[hidden]{display:none!important}
+section.screen:not([hidden]){display:block!important}
+
+/* v15 complete puzzle boards */
+.clue-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.clue-card{padding:16px;border:1px solid var(--line);border-radius:14px;background:#061923;text-align:center}
+.clue-card .big-icons{font-size:2.2rem;line-height:1.5}
+.db-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.db-item{padding:10px;border:1px solid #ffffff18;border-radius:9px;background:#071923}
+.db-item b{color:var(--gold)}
+.sudoku .blank{background:#041018}
+.sudoku .target{color:#ffe69a;background:rgba(241,200,91,.08);font-size:.72rem}
+.kana-board{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:16px auto;max-width:560px}
+.kana-col{border:1px solid var(--line);border-radius:10px;padding:5px 3px;background:#061923;text-align:center}
+.kana-col b{display:block;color:var(--cyan2);font-size:.68rem;margin-bottom:4px}
+.kana-col span{display:block;padding:4px 0;border-bottom:1px solid #ffffff0d}
+.kana-col span:last-child{border-bottom:0}
+.wrap-note{font-size:.74rem;color:#9dbac1;margin-top:8px}
+.moon-path-card{padding:12px;border:1px solid var(--line);border-radius:12px;background:#061923;margin:10px 0}
+.moon-path-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.76rem}
+.moon-path-head b{color:var(--gold)}
+.path-grid{display:grid;grid-template-columns:repeat(5,38px);grid-template-rows:repeat(4,38px);gap:5px;justify-content:center}
+.path-cell{display:grid;place-items:center;border:1px solid #ffffff18;border-radius:8px;background:#0a2029;font-weight:900}
+.path-row-dir{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:7px auto 0;max-width:270px;font-size:.68rem;color:#9fc7ce;text-align:center}
+.picture-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.picture-clue{padding:14px;border:1px solid var(--line);border-radius:12px;background:#071923;text-align:center}
+.picture-clue .pic{font-size:2.2rem}
+.picture-clue .idx{display:inline-block;margin-top:7px;padding:4px 9px;border:1px solid rgba(241,200,91,.4);border-radius:999px;color:#ffe69a;font-weight:900}
+.dev-audit{display:none!important}
+@media(max-width:600px){
+ .clue-choice-grid{grid-template-columns:1fr}
+ .kana-board{grid-template-columns:repeat(5,1fr)}
+ .path-grid{grid-template-columns:repeat(5,34px);grid-template-rows:repeat(4,34px)}
+ .picture-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+
+/* v16: original chocolate-factory CH01/02 reskinned for Gekko-dan */
+.oldbook{position:relative;margin:16px auto;padding:22px;max-width:720px;border:1px solid rgba(80,215,222,.32);
+border-radius:18px;background:linear-gradient(135deg,#07141d,#0b2530 48%,#061018);
+box-shadow:0 20px 50px #0008,inset 0 0 35px rgba(80,215,222,.05)}
+.oldbook:before{content:"GEKKO-DAN // INTERCEPTED ARCHIVE";position:absolute;right:14px;top:9px;
+font-size:.58rem;letter-spacing:.14em;color:#6eaeb7}
+.bookspread{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+.bookpage{min-height:280px;padding:18px;border:1px solid rgba(241,200,91,.22);border-radius:12px;
+background:linear-gradient(180deg,#10242b,#09191f);box-shadow:inset 0 0 30px #0005}
+.bookpage h3{margin:0 0 10px;color:#ffe69a;font-size:.85rem;letter-spacing:.08em}
+.orange-visual{font-size:4rem;text-align:center;margin:10px 0}
+.number-code{text-align:center;font-size:1.35rem;font-weight:1000;letter-spacing:.12em;color:#f3f6f7}
+.photo-wall{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+.photo-tile{min-height:78px;display:grid;place-items:center;text-align:center;border:1px solid var(--line);
+border-radius:9px;background:#061923;padding:6px;font-size:.74rem}
+.photo-tile .emoji{display:block;font-size:2rem}
+.monitor-shell{max-width:650px;margin:16px auto;padding:14px;border:2px solid #1c4650;border-radius:18px;
+background:linear-gradient(180deg,#102932,#07151b);box-shadow:0 18px 45px #0009}
+.monitor-head{display:flex;justify-content:space-between;align-items:center;padding:5px 7px 12px;color:#a6dfe5;
+font-size:.67rem;letter-spacing:.1em}
+.sudoku.original{max-width:520px;margin:auto;background:#e9eef0;padding:4px;border-radius:4px}
+.sudoku.original div{background:#f7f8f8;color:#101010}
+.sudoku.original .blank{background:#f7f8f8}
+.sudoku.original .redtarget{background:#f7f8f8;outline:3px solid #e84747;outline-offset:-3px}
+.monitor-prompt{text-align:center;padding:12px 4px 3px;font-weight:900;color:#fff}
+@media(max-width:600px){
+ .bookspread{grid-template-columns:1fr}.bookpage{min-height:0}
+ .oldbook{padding:13px}.orange-visual{font-size:3.2rem}
+}
+
+
+/* v16.1 CH01 uses the approved puzzle artwork */
+.ch1-image-wrap{
+  margin:16px auto 4px;
+  max-width:1000px;
+  border:1px solid rgba(80,215,222,.28);
+  border-radius:14px;
+  overflow:hidden;
+  background:#02070b;
+  box-shadow:0 18px 40px #0008;
+}
+.ch1-puzzle-image{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+}
+@media(max-width:600px){
+  .ch1-image-wrap{border-radius:9px}
+  .ch1-puzzle-image{width:100%;height:auto}
+}
+
+
+/* v18 character silhouette communication portraits */
+.dialogue.character-dialogue{
+  position:relative;
+  min-height:142px;
+  padding:20px 22px 20px 154px;
+  overflow:hidden;
+}
+.dialogue.character-dialogue .char-portrait{
+  position:absolute;
+  left:10px;
+  bottom:0;
+  width:128px;
+  height:128px;
+  object-fit:cover;
+  object-position:center;
+  border:1px solid rgba(100,220,255,.38);
+  border-radius:12px 12px 0 0;
+  box-shadow:0 0 24px rgba(80,160,255,.16);
+  background:#030914;
+}
+.dialogue.character-dialogue[data-character="ヒカリ"] .char-portrait{
+  border-color:rgba(245,92,255,.48);
+  box-shadow:0 0 24px rgba(229,64,255,.18);
+}
+.dialogue.character-dialogue[data-character="ナル・シー"] .char-portrait{
+  border-color:rgba(190,90,255,.48);
+  box-shadow:0 0 24px rgba(150,62,255,.2);
+}
+.dialogue.character-dialogue .char-name{
+  display:inline-block;
+  margin-bottom:7px;
+  letter-spacing:.08em;
+}
+@media(max-width:600px){
+  .dialogue.character-dialogue{
+    min-height:112px;
+    padding:16px 14px 16px 108px;
+  }
+  .dialogue.character-dialogue .char-portrait{
+    left:8px;width:88px;height:104px;
+  }
+}
+
+
+/* v18.1 Naru-C long-hair silhouette */
+.dialogue.character-dialogue[data-character="ナル・シー"] .char-portrait{
+  object-position:center 38%;
+}
+
+
+/* v18.2 CH02 Sudoku visibility upgrade */
+.sudoku.original{
+  background:#000!important;
+  gap:1px!important;
+  padding:3px!important;
+  border:3px solid #000!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.18),0 10px 30px #0007;
+}
+.sudoku.original div{
+  background:#f7f8f8!important;
+  color:#050505!important;
+  border:0!important;
+}
+.sudoku.original div:nth-child(3n){
+  border-right:2px solid #000!important;
+}
+.sudoku.original div:nth-child(9n){
+  border-right:0!important;
+}
+.sudoku.original div:nth-child(n+19):nth-child(-n+27),
+.sudoku.original div:nth-child(n+46):nth-child(-n+54){
+  border-bottom:2px solid #000!important;
+}
+.sudoku.original .redtarget{
+  background:#fff!important;
+  outline:4px solid #e53935!important;
+  outline-offset:-4px!important;
+}
+
+
+/* v18.3 Hikari ponytail silhouette */
+.dialogue.character-dialogue[data-character="ヒカリ"] .char-portrait{
+  object-position:center 42%;
+}
+
+
+/* v18.5 approved final character silhouettes */
+.dialogue.character-dialogue[data-character="ナル・シー"] .char-portrait{
+  object-position:center 40%;
+}
+.dialogue.character-dialogue[data-character="ヒカリ"] .char-portrait{
+  object-position:center 43%;
+}
+.dialogue.character-dialogue[data-character="カゲ"] .char-portrait{
+  object-position:center 38%;
+}
+
+
+/* v18.6 overall gameplay polish */
+.comm-badge{
+  display:inline-flex;align-items:center;gap:7px;margin:0 0 8px;
+  font-size:.64rem;letter-spacing:.15em;color:#91cfd7;font-weight:900;
+}
+.comm-badge:before{
+  content:"";width:7px;height:7px;border-radius:50%;background:#79f4ff;
+  box-shadow:0 0 12px #79f4ff;animation:commPulse 1.6s ease-in-out infinite;
+}
+@keyframes commPulse{50%{opacity:.28;transform:scale(.7)}}
+
+.dialogue.character-dialogue:before{
+  content:"COMMUNICATION LINK";
+  position:absolute;right:12px;top:8px;
+  font-size:.56rem;letter-spacing:.14em;color:#ffffff42;font-weight:900;
+}
+.dialogue.character-dialogue[data-character="ナル・シー"]:before{content:"GEKKO-DAN // NARU-C"}
+.dialogue.character-dialogue[data-character="ヒカリ"]:before{content:"GEKKO-DAN // HIKARI"}
+.dialogue.character-dialogue[data-character="カゲ"]:before{content:"GEKKO-DAN // KAGE"}
+
+.stage-strip{
+  display:grid;grid-template-columns:repeat(12,1fr);gap:4px;
+  margin:8px 0 16px;
+}
+.stage-dot{
+  height:5px;border-radius:99px;background:#ffffff12;border:1px solid #ffffff08;
+}
+.stage-dot.done{background:#4cd6df55;border-color:#4cd6df88}
+.stage-dot.current{background:#9bf8ff;box-shadow:0 0 12px #57dce8}
+
+.answer-zone{
+  position:relative;
+}
+.answer-zone.is-wrong{animation:wrongShake .34s ease}
+.answer-zone.is-correct{animation:correctPulse .48s ease}
+@keyframes wrongShake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-7px)}
+  50%{transform:translateX(7px)}
+  75%{transform:translateX(-4px)}
+}
+@keyframes correctPulse{
+  0%{filter:none}
+  45%{filter:drop-shadow(0 0 12px rgba(117,255,175,.5))}
+  100%{filter:none}
+}
+button.busy{pointer-events:none;opacity:.62}
+.status.ok{color:#9ff0b0!important;text-shadow:0 0 12px rgba(159,240,176,.18)}
+.status.ng{color:#ff9d9d!important}
+
+.screen h1{
+  margin-bottom:12px;
+}
+.factory-header{
+  position:relative;overflow:hidden;
+}
+.factory-header:after{
+  content:"";position:absolute;left:-35%;bottom:0;width:35%;height:1px;
+  background:linear-gradient(90deg,transparent,#93fbff,transparent);
+  animation:scanHeader 4s linear infinite;
+}
+@keyframes scanHeader{to{left:110%}}
+
+.ch1-image-wrap{position:relative}
+.ch1-image-wrap:after{
+  content:"TAP / PINCH TO ZOOM";
+  position:absolute;right:8px;bottom:7px;padding:3px 7px;
+  border-radius:6px;background:#02070bcc;color:#b7d9df;
+  font-size:.55rem;letter-spacing:.08em;
+}
+.ch1-puzzle-image{cursor:zoom-in}
+.image-lightbox{
+  display:none;position:fixed;inset:0;z-index:15000;background:#000e;
+  align-items:center;justify-content:center;padding:12px;
+}
+.image-lightbox.show{display:flex}
+.image-lightbox img{max-width:98vw;max-height:94vh;object-fit:contain}
+.image-lightbox .close{
+  position:absolute;top:12px;right:12px;width:auto!important;
+  min-width:44px;padding:9px 12px!important;border-radius:999px!important;
+}
+
+@media(max-width:600px){
+  .stage-strip{gap:2px;margin-bottom:12px}
+  .dialogue.character-dialogue:before{font-size:.47rem;top:6px;right:7px}
+  .ch1-image-wrap:after{content:"TAP TO ZOOM"}
+}
+
+
+/* v18.8 CH03 approved puzzle image */
+.ch3-image-wrap{
+  margin:16px auto 4px;
+  max-width:1000px;
+  border:1px solid rgba(80,215,222,.28);
+  border-radius:14px;
+  overflow:hidden;
+  background:#02070b;
+  box-shadow:0 18px 40px #0008;
+  position:relative;
+}
+.ch3-puzzle-image{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  cursor:zoom-in;
+}
+.ch3-image-wrap:after{
+  content:"TAP / PINCH TO ZOOM";
+  position:absolute;
+  right:8px;
+  bottom:7px;
+  padding:3px 7px;
+  border-radius:6px;
+  background:#02070bcc;
+  color:#b7d9df;
+  font-size:.55rem;
+  letter-spacing:.08em;
+}
+@media(max-width:600px){
+  .ch3-image-wrap{border-radius:9px}
+  .ch3-image-wrap:after{content:"TAP TO ZOOM"}
+}
+
+
+/* v18.9 CH03 original hint */
+.ch3-hint{
+  margin-top:12px;
+  border-left:3px solid #71eaf2;
+  background:rgba(31,105,115,.12);
+}
+
+
+/* v19.2 CH04 moon puzzle */
+.ch4-image-wrap{
+  margin:16px auto 4px;
+  max-width:1000px;
+  border:1px solid rgba(80,215,222,.28);
+  border-radius:14px;
+  overflow:hidden;
+  background:#02070b;
+  box-shadow:0 18px 40px #0008;
+  position:relative;
+}
+.ch4-puzzle-image{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  cursor:zoom-in;
+}
+.ch4-image-wrap:after{
+  content:"TAP / PINCH TO ZOOM";
+  position:absolute;
+  right:8px; bottom:7px;
+  padding:3px 7px;
+  border-radius:6px;
+  background:#02070bcc;
+  color:#b7d9df;
+  font-size:.55rem;
+  letter-spacing:.08em;
+}
+@media(max-width:600px){.ch4-image-wrap:after{content:"TAP TO ZOOM"}}
+
+
+/* v19.3 CH05 puzzle image */
+.ch5-image-wrap{margin:16px auto 4px;max-width:1000px;border:1px solid rgba(80,215,222,.28);border-radius:14px;overflow:hidden;background:#02070b;box-shadow:0 18px 40px #0008;position:relative}
+.ch5-puzzle-image{display:block;width:100%;height:auto;object-fit:contain;cursor:zoom-in}
+.ch5-image-wrap:after{content:"TAP / PINCH TO ZOOM";position:absolute;right:8px;bottom:7px;padding:3px 7px;border-radius:6px;background:#02070bcc;color:#b7d9df;font-size:.55rem;letter-spacing:.08em}
+@media(max-width:600px){.ch5-image-wrap:after{content:"TAP TO ZOOM"}}
+
+
+/* v19.4 CH05 exact deterministic moon boards */
+.ch5-grid-exact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.ch5-card{position:relative;padding:18px 14px 14px;border:1px solid #b9904c88;border-radius:14px;background:linear-gradient(180deg,#09111d,#03070d);box-shadow:inset 0 0 30px #0009,0 10px 24px #0007}
+.ch5-card-label{position:absolute;left:10px;top:7px;font-size:.72rem;color:#d9bc80;font-weight:900}
+.ch5-board{display:grid;gap:4px;margin-top:12px}
+.ch5-row{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.ch5-cell{display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid #8f744988;border-radius:7px;background:#08111ce8;color:#f7e8c7;font-size:1.35rem;font-weight:800;text-shadow:0 0 9px #d9b66d44}
+.row-dir{position:absolute;right:-8px;top:50%;transform:translate(100%,-50%);color:#e5bf6d;font-weight:900}
+.ch5-moon{position:absolute;z-index:3;font-size:1.55rem;filter:drop-shadow(0 0 9px #ffe5a3)}
+.ch5-moon.tl{left:19px;top:21px}.ch5-moon.tr{right:19px;top:21px}.ch5-moon.bl{left:19px;bottom:17px}.ch5-moon.br{right:19px;bottom:17px}
+@media(max-width:700px){
+  .ch5-grid-exact{grid-template-columns:1fr}
+  .ch5-cell{min-height:42px;font-size:1.15rem}
+}
+
+
+/* v19.5 CH05 readability improvements */
+.ch5-card{padding:42px 28px 20px}
+.ch5-board{margin-top:4px}
+.ch5-moon{
+  position:absolute;
+  z-index:5;
+  font-size:1.45rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;height:38px;
+  border:1px solid #d8b66b88;
+  border-radius:50%;
+  background:#050b13;
+  filter:drop-shadow(0 0 9px #ffe5a3);
+}
+.ch5-moon.tl{left:12px;top:7px}
+.ch5-moon.tr{right:12px;top:7px}
+.ch5-moon.bl{left:12px;bottom:7px}
+.ch5-moon.br{right:12px;bottom:7px}
+
+/* arrows live in their own gutter instead of overlapping letters */
+.ch5-row{padding:0 30px}
+.row-dir{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:24px;
+  text-align:center;
+  font-size:1.2rem;
+  color:#e5bf6d;
+  text-shadow:0 0 8px #d9a94488;
+}
+.ch5-row[data-dir="→"] .row-dir{right:0}
+.ch5-row[data-dir="←"] .row-dir{left:0}
+.ch5-cell{position:relative;z-index:1}
+
+@media(max-width:700px){
+  .ch5-card{padding:40px 22px 18px}
+  .ch5-row{padding:0 25px}
+  .row-dir{width:20px;font-size:1.05rem}
+}
+
+
+/* v19.8: keep v19.5 layout, separate number badge from moon */
+.ch5-card-label{
+  left:50% !important;
+  top:7px !important;
+  transform:translateX(-50%);
+  min-width:34px;
+  text-align:center;
+  padding:2px 8px;
+  border:1px solid #b9904c66;
+  border-radius:999px;
+  background:#050b13ee;
+  z-index:9;
+}
+
+
+/* v19.9 CH05: no board numbers, keep v19.5-style spacing */
+.ch5-card{padding-top:34px !important}
+.ch5-card-label{display:none !important}
+
+
+/* v20.1 CH06 */
+.ch06-puzzle{max-width:1100px;margin-inline:auto}
+.ch06-image-button{display:block;width:100%;margin:18px auto 8px;padding:0;border:1px solid #a67b36;background:#02060c;border-radius:12px;overflow:hidden;cursor:zoom-in}
+.ch06-image-button img{display:block;width:100%;height:auto}
+.puzzle-image-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px;background:#000d;backdrop-filter:blur(5px)}
+.puzzle-image-modal.show{display:flex}
+.puzzle-image-modal img{max-width:96vw;max-height:92vh;object-fit:contain;border:1px solid #b9904c;box-shadow:0 0 45px #000}
+.puzzle-image-close{position:fixed;right:24px;top:18px;width:48px;height:48px;border-radius:50%;font-size:30px;line-height:1;background:#07101b;color:#f2d59a;border:1px solid #b9904c;z-index:10000}
+
+
+/* v20.2 CH06 in existing Sixth Production Line */
+.ch06-image-wrap{
+  margin:16px auto 6px;
+  max-width:1000px;
+  border:1px solid rgba(166,123,54,.65);
+  border-radius:14px;
+  overflow:hidden;
+  background:#02060c;
+  box-shadow:0 18px 40px #0008;
+}
+.ch06-puzzle-image{
+  display:block;
+  width:100%;
+  height:auto;
+  cursor:zoom-in;
+}
+
+
+/* v20.3 CH06 visual integration: return to Gekkodan moonlit system aesthetic */
+#c6 .ch06-puzzle{
+  position:relative;
+  overflow:hidden;
+  padding:24px;
+  border:1px solid rgba(76,135,255,.42);
+  background:
+    radial-gradient(circle at 82% 12%, rgba(119,68,255,.22), transparent 24%),
+    radial-gradient(circle at 14% 18%, rgba(31,111,255,.16), transparent 30%),
+    linear-gradient(145deg, rgba(3,10,25,.98), rgba(5,13,31,.96) 52%, rgba(10,5,30,.98));
+  box-shadow:inset 0 0 40px rgba(43,89,190,.12),0 18px 50px #0009;
+}
+#c6 .ch06-puzzle:before{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 49.8%,rgba(72,123,255,.06) 50%,transparent 50.2%),
+    linear-gradient(0deg,transparent 49.8%,rgba(72,123,255,.05) 50%,transparent 50.2%);
+  background-size:46px 46px;
+  opacity:.45;
+}
+#c6 .ch06-puzzle>b{
+  position:relative;z-index:1;
+  color:#e9efff;
+  letter-spacing:.08em;
+  text-shadow:0 0 12px rgba(103,94,255,.45);
+}
+#c6 .ch06-image-wrap{
+  position:relative;z-index:1;
+  border:1px solid rgba(115,84,255,.55);
+  background:#020714;
+  box-shadow:0 0 0 1px rgba(38,144,255,.15),0 0 30px rgba(75,45,200,.18);
+}
+
+
+#c6 .ch06-image-wrap{position:relative}
+#c6 .ch06-hide-heading{
+  position:absolute;
+  z-index:3;
+  left:0;
+  right:0;
+  top:63.2%;
+  height:11%;
+  pointer-events:none;
+  background:linear-gradient(180deg,#030a18 0%,#030914 100%);
+  border-top:1px solid rgba(166,123,54,.45);
+}
+
+
+/* v20.5 CH06: conceal photo-name labels baked into source image */
+#c6 .ch06-hide-photo-labels{
+  position:absolute;
+  z-index:4;
+  left:3.5%;
+  right:3.5%;
+  top:49.3%;
+  height:10.8%;
+  pointer-events:none;
+  background:linear-gradient(180deg,#050914 0%,#030813 100%);
+  border-top:1px solid rgba(166,123,54,.45);
+  border-bottom:1px solid rgba(166,123,54,.35);
+}
+
+
+/* v20.6 CH06 final cleanup */
+#c6 .ch06-image-wrap{
+  max-width:820px !important;
+  margin:16px auto 6px !important;
+}
+#c6 .ch06-puzzle-image{
+  width:100% !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
+#c6 .ch06-hide-photo-labels,
+#c6 .ch06-hide-heading{
+  display:none !important;
+}
+
+
+/* v20.7 SECURITY A deterministic puzzle */
+.security-a{
+  background:
+    radial-gradient(circle at 50% 48%, rgba(52,85,160,.13), transparent 34%),
+    linear-gradient(145deg, rgba(2,8,20,.98), rgba(4,13,32,.97));
+  border:1px solid rgba(76,135,255,.38);
+  box-shadow:inset 0 0 36px rgba(56,108,255,.10),0 18px 45px #0008;
+}
+.secA-board{
+  position:relative;
+  width:min(100%,980px);
+  aspect-ratio:16/9;
+  margin:18px auto 8px;
+  border:1px solid rgba(72,129,255,.38);
+  border-radius:16px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(57,94,170,.12), transparent 35%),
+    repeating-linear-gradient(0deg, rgba(66,112,210,.045) 0 1px, transparent 1px 38px),
+    repeating-linear-gradient(90deg, rgba(66,112,210,.04) 0 1px, transparent 1px 38px),
+    #020817;
+}
+.secA-board:before{
+  content:"GEKKODAN SYSTEM // SECURITY CLEARANCE";
+  position:absolute;
+  left:18px;bottom:10px;
+  color:#6e9cff88;
+  font-size:.62rem;
+  letter-spacing:.18em;
+}
+.secA-board:after{
+  content:"☾";
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  color:#7a8fd41f;
+  font-size:9rem;
+}
+.secA-node{
+  position:absolute;
+  width:28px;height:28px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:2px solid #fff9;
+  box-shadow:0 0 18px currentColor,0 0 34px currentColor;
+  z-index:3;
+}
+.secA-node.red{background:#ff3a3a;color:#ff3a3a}
+.secA-node.orange{background:#ff8a1c;color:#ff8a1c}
+.secA-node.yellow{background:#ffe83a;color:#ffe83a}
+.secA-node.green{background:#31d56c;color:#31d56c}
+.secA-node.blue{background:#3297ff;color:#3297ff}
+.secA-node.indigo{background:#4550ff;color:#4550ff}
+.secA-node.violet{background:#b444ff;color:#b444ff}
+.secA-letter{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  color:#f4f7ff;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:clamp(1.5rem,3.6vw,3rem);
+  font-weight:700;
+  text-shadow:0 0 12px #8fb5ff55;
+  z-index:2;
+}
+.secA-letter.decoy{opacity:.62}
+.secA-letter.intended{opacity:.96}
+@media(max-width:700px){
+  .secA-node{width:22px;height:22px}
+  .secA-letter{font-size:1.45rem}
+}
+
+
+/* v20.8 CENTRAL CONTROL ROOM */
+.central-auth{
+  border:1px solid rgba(74,133,255,.42);
+  background:
+    radial-gradient(circle at 50% 5%,rgba(91,72,255,.16),transparent 32%),
+    linear-gradient(145deg,rgba(2,8,21,.98),rgba(4,13,31,.97));
+  box-shadow:inset 0 0 38px rgba(50,100,230,.1),0 18px 45px #0008;
+}
+.central-prompt{text-align:center;padding:10px 8px 20px}
+.central-prompt b{font-size:clamp(1rem,2.3vw,1.35rem);line-height:1.8;color:#edf3ff}
+.central-kicker{display:block;margin-bottom:8px;color:#77a8ff;font-size:.72rem;letter-spacing:.2em}
+.central-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+  max-width:820px;margin:0 auto 18px;
+}
+.central-log{
+  position:relative;min-height:96px;padding:18px 12px;
+  border:1px solid rgba(76,126,218,.42);
+  border-radius:10px;background:linear-gradient(180deg,#071226,#030a16);
+  color:#dce8ff;cursor:pointer;transition:.18s ease;
+  box-shadow:inset 0 0 20px rgba(40,91,190,.08);
+}
+.central-log span{display:block;font-size:1.35rem;font-weight:800;letter-spacing:.08em}
+.central-log small{display:block;margin-top:7px;color:#6987b8;letter-spacing:.15em}
+.central-log:hover{transform:translateY(-2px);border-color:#5d91ed}
+.central-log.selected{
+  border-color:#8b72ff;color:#fff;
+  background:linear-gradient(180deg,#122a58,#10173c);
+  box-shadow:0 0 22px rgba(78,84,255,.28),inset 0 0 24px rgba(82,109,255,.16);
+}
+.central-log.selected:after{
+  content:"SELECTED";position:absolute;right:8px;top:7px;
+  color:#9fc1ff;font-size:.56rem;letter-spacing:.12em;
+}
+.central-submit{display:block;max-width:360px;width:100%;margin:12px auto 0}
+@media(max-width:650px){.central-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* v20.9 Central numeric archive ordering */
+#central .central-log{position:relative}
+#central .central-log.selected:after{content:"" !important}
+#central .central-order{
+  position:absolute;
+  right:8px;top:7px;
+  display:grid;place-items:center;
+  width:25px;height:25px;
+  border-radius:50%;
+  border:1px solid #9ebcff;
+  background:#101d46;
+  color:#fff;
+  font-style:normal;
+  font-size:.72rem;
+  font-weight:800;
+  box-shadow:0 0 12px rgba(93,114,255,.4);
+}
+
+
+/* v21.0 Central cleared-code archive */
+.central-archive-panel{max-width:820px;margin:0 auto 18px}
+.archive-toggle{
+  display:block;
+  width:min(100%,360px);
+  margin:0 auto 12px;
+  border:1px solid rgba(106,151,255,.5);
+  background:linear-gradient(180deg,#0b1d3e,#071126);
+  color:#dce9ff;
+  letter-spacing:.08em;
+}
+.archive-log{
+  border:1px solid rgba(85,135,245,.42);
+  border-radius:12px;
+  padding:14px;
+  background:linear-gradient(145deg,rgba(4,13,31,.98),rgba(7,18,42,.97));
+  box-shadow:inset 0 0 28px rgba(54,104,220,.1);
+}
+.archive-log-head{padding:2px 4px 12px;border-bottom:1px solid rgba(93,128,196,.22)}
+.archive-log-head span{display:block;color:#a9c5ff;font-size:.75rem;letter-spacing:.17em}
+.archive-log-head small{display:block;margin-top:5px;color:#607ba9;font-size:.62rem;letter-spacing:.09em}
+.archive-code-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  padding-top:12px;
+}
+.archive-code-grid div{
+  padding:12px 8px;
+  border:1px solid rgba(80,121,199,.26);
+  border-radius:8px;
+  background:#050d1d;
+  text-align:center;
+}
+.archive-code-grid span{display:block;color:#718dbd;font-size:.68rem;letter-spacing:.1em}
+.archive-code-grid b{display:block;margin-top:5px;color:#f1f5ff;font-size:1.05rem}
+@media(max-width:650px){.archive-code-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* v21.1 Central prompt: symbol only */
+#central .central-symbol-prompt{padding:12px 8px 20px}
+#central .central-symbol{
+  display:block;
+  margin-top:8px;
+  font-size:clamp(3rem,8vw,5.5rem);
+  line-height:1;
+  color:#eef4ff;
+  text-shadow:0 0 22px rgba(112,133,255,.55);
+  letter-spacing:0;
+}
+
+
+/* v21.3 SECURITY A — equal glyph appearance + dense decoys */
+.security-a-v3{
+  padding:22px;
+  border:1px solid rgba(80,135,255,.42);
+  background:linear-gradient(145deg,rgba(2,8,20,.99),rgba(5,13,31,.98));
+}
+.secA-board-v3{
+  position:relative;
+  width:min(100%,940px);
+  aspect-ratio:16/9;
+  margin:18px auto 4px;
+  overflow:hidden;
+  border:1px solid rgba(84,132,234,.42);
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(70,93,170,.10),transparent 30%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.04) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.035) 0 1px,transparent 1px 38px),
+    linear-gradient(160deg,#020714,#050d20);
+  box-shadow:inset 0 0 42px rgba(48,91,190,.08);
+}
+.secA-board-v3 .secA-watermark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;color:#7894d410;font-size:3rem;font-weight:900;letter-spacing:.14em;
+}
+.secA-board-v3 .secA-watermark span{font-size:.65rem;letter-spacing:.28em}
+.secA-board-v3 .secA-node{
+  width:24px;height:24px;z-index:5;
+}
+.secA-glyph-v3{
+  position:absolute;
+  z-index:3;
+  transform:translate(-50%,-50%);
+  color:#dfe7f7;
+  opacity:.76;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.2rem,2.6vw,2.25rem);
+  font-weight:650;
+  text-shadow:0 0 6px rgba(115,145,220,.18);
+  user-select:none;
+}
+@media(max-width:650px){
+  .secA-board-v3 .secA-node{width:19px;height:19px}
+  .secA-glyph-v3{font-size:1.15rem}
+}
+
+
+/* v21.4 SECURITY A — unambiguous path geometry */
+.secA-board-v4{
+  position:relative;
+  width:min(100%,940px);
+  aspect-ratio:16/9;
+  margin:18px auto 4px;
+  overflow:hidden;
+  border:1px solid rgba(84,132,234,.42);
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(70,93,170,.10),transparent 30%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.04) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.035) 0 1px,transparent 1px 38px),
+    linear-gradient(160deg,#020714,#050d20);
+  box-shadow:inset 0 0 42px rgba(48,91,190,.08);
+}
+.secA-board-v4 .secA-watermark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;color:#7894d410;font-size:3rem;font-weight:900;letter-spacing:.14em;
+}
+.secA-board-v4 .secA-watermark span{font-size:.65rem;letter-spacing:.28em}
+.secA-board-v4 .secA-node{width:24px;height:24px;z-index:5}
+.secA-glyph-v4{
+  position:absolute;z-index:3;transform:translate(-50%,-50%);
+  color:#dfe7f7;opacity:.76;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.2rem,2.6vw,2.25rem);
+  font-weight:650;
+  text-shadow:0 0 6px rgba(115,145,220,.18);
+  user-select:none;
+}
+@media(max-width:650px){
+  .secA-board-v4 .secA-node{width:19px;height:19px}
+  .secA-glyph-v4{font-size:1.15rem}
+}
+
+
+/* v21.5 SECURITY A — shuffled seven-color route */
+.secA-board-v5{
+  position:relative;width:min(100%,940px);aspect-ratio:16/9;margin:18px auto 4px;
+  overflow:hidden;border:1px solid rgba(84,132,234,.42);border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(70,93,170,.10),transparent 30%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.04) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.035) 0 1px,transparent 1px 38px),
+    linear-gradient(160deg,#020714,#050d20);
+  box-shadow:inset 0 0 42px rgba(48,91,190,.08);
+}
+.secA-board-v5 .secA-watermark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;color:#7894d410;font-size:3rem;font-weight:900;letter-spacing:.14em;
+}
+.secA-board-v5 .secA-watermark span{font-size:.65rem;letter-spacing:.28em}
+.secA-board-v5 .secA-node{width:24px;height:24px;z-index:5}
+.secA-glyph-v5{
+  position:absolute;z-index:3;transform:translate(-50%,-50%);
+  color:#dfe7f7;opacity:.76;font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.2rem,2.6vw,2.25rem);font-weight:650;
+  text-shadow:0 0 6px rgba(115,145,220,.18);user-select:none;
+}
+@media(max-width:650px){
+  .secA-board-v5 .secA-node{width:19px;height:19px}
+  .secA-glyph-v5{font-size:1.15rem}
+}
+
+
+/* v21.6 SECURITY A — balanced decoy distribution */
+.secA-board-v6{
+  position:relative;width:min(100%,940px);aspect-ratio:16/9;margin:18px auto 4px;
+  overflow:hidden;border:1px solid rgba(84,132,234,.42);border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(70,93,170,.10),transparent 30%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.04) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.035) 0 1px,transparent 1px 38px),
+    linear-gradient(160deg,#020714,#050d20);
+  box-shadow:inset 0 0 42px rgba(48,91,190,.08);
+}
+.secA-board-v6 .secA-watermark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;color:#7894d410;font-size:3rem;font-weight:900;letter-spacing:.14em;
+}
+.secA-board-v6 .secA-watermark span{font-size:.65rem;letter-spacing:.28em}
+.secA-board-v6 .secA-node{width:24px;height:24px;z-index:5}
+.secA-glyph-v6{
+  position:absolute;z-index:3;transform:translate(-50%,-50%);
+  color:#dfe7f7;opacity:.76;font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.2rem,2.6vw,2.25rem);font-weight:650;
+  text-shadow:0 0 6px rgba(115,145,220,.18);user-select:none;
+}
+@media(max-width:650px){
+  .secA-board-v6 .secA-node{width:19px;height:19px}
+  .secA-glyph-v6{font-size:1.15rem}
+}
+
+
+/* v21.7 SECURITY A — clear answer corridors */
+.secA-board-v7{
+  position:relative;width:min(100%,940px);aspect-ratio:16/9;margin:18px auto 4px;
+  overflow:hidden;border:1px solid rgba(84,132,234,.42);border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(70,93,170,.10),transparent 30%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.04) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.035) 0 1px,transparent 1px 38px),
+    linear-gradient(160deg,#020714,#050d20);
+  box-shadow:inset 0 0 42px rgba(48,91,190,.08);
+}
+.secA-board-v7 .secA-watermark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;color:#7894d410;font-size:3rem;font-weight:900;letter-spacing:.14em;
+}
+.secA-board-v7 .secA-watermark span{font-size:.65rem;letter-spacing:.28em}
+.secA-board-v7 .secA-node{width:24px;height:24px;z-index:5}
+.secA-glyph-v7{
+  position:absolute;z-index:3;transform:translate(-50%,-50%);
+  color:#dfe7f7;opacity:.76;font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.2rem,2.6vw,2.25rem);font-weight:650;
+  text-shadow:0 0 6px rgba(115,145,220,.18);user-select:none;
+}
+@media(max-width:650px){
+  .secA-board-v7 .secA-node{width:19px;height:19px}
+  .secA-glyph-v7{font-size:1.15rem}
+}
+
+
+/* v21.8 SECURITY A — spread answer midpoints, not just decoys */
+.secA-board-v9{
+  position:relative;width:min(100%,940px);aspect-ratio:16/9;margin:18px auto 4px;
+  overflow:hidden;border:1px solid rgba(84,132,234,.42);border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(70,93,170,.10),transparent 30%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.04) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.035) 0 1px,transparent 1px 38px),
+    linear-gradient(160deg,#020714,#050d20);
+  box-shadow:inset 0 0 42px rgba(48,91,190,.08);
+}
+.secA-board-v9 .secA-watermark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;color:#7894d410;font-size:3rem;font-weight:900;letter-spacing:.14em;
+}
+.secA-board-v9 .secA-watermark span{font-size:.65rem;letter-spacing:.28em}
+.secA-board-v9 .secA-node{width:24px;height:24px;z-index:5}
+.secA-glyph-v9{
+  position:absolute;z-index:3;transform:translate(-50%,-50%);
+  color:#dfe7f7;opacity:.76;font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.2rem,2.6vw,2.25rem);font-weight:650;
+  text-shadow:0 0 6px rgba(115,145,220,.18);user-select:none;
+}
+@media(max-width:650px){
+  .secA-board-v9 .secA-node{width:19px;height:19px}
+  .secA-glyph-v9{font-size:1.15rem}
+}
+
+
+/* v22.0 SECURITY B — Moon phase password */
+.security-b-v1{padding:22px;border:1px solid rgba(80,135,255,.42);background:linear-gradient(145deg,#020817,#060c20)}
+.secB-instruction{text-align:center;color:#eef4ff;font-weight:800;letter-spacing:.09em;font-size:clamp(1rem,2.4vw,1.3rem);margin-bottom:16px}
+.secB-board{
+  position:relative;width:min(100%,940px);aspect-ratio:16/9;margin:auto;overflow:hidden;
+  border:1px solid rgba(84,132,234,.42);border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(105,126,220,.11),transparent 26%),
+    repeating-linear-gradient(0deg,rgba(70,115,220,.035) 0 1px,transparent 1px 42px),
+    repeating-linear-gradient(90deg,rgba(70,115,220,.03) 0 1px,transparent 1px 42px),
+    linear-gradient(155deg,#020714,#050b1c);
+}
+.secB-watermark{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);text-align:center;color:#7995d411;font-size:3rem;font-weight:900;letter-spacing:.12em}
+.secB-watermark span{font-size:.65rem;letter-spacing:.25em}
+.secB-moon{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:6.2rem;color:#e8efff;text-shadow:0 0 24px #9ab4ff,0 0 65px #6479d7;z-index:2}
+.window{
+ position:absolute;width:74px;height:88px;border:2px solid #6687c7;border-radius:5px 5px 2px 2px;
+ background:linear-gradient(180deg,#102347,#050c1b);box-shadow:inset 0 0 18px #142f62,0 0 15px #0009;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5
+}
+.window:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:#5571a5}
+.window:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#5571a5}
+.window b{z-index:2;font-size:1.55rem;color:#f0f5ff;text-shadow:0 0 8px #91adff}
+.window small{z-index:2;font-size:.48rem;color:#6983ae;letter-spacing:.08em;margin-top:4px}
+.win-a{left:8%;top:13%}.win-b{right:9%;top:14%}.win-c{left:10%;bottom:10%}.win-d{right:8%;bottom:9%}
+.moon-phase{position:absolute;z-index:7;width:40px;height:40px;display:grid;place-items:center}
+.moon-phase i{display:block;width:29px;height:29px;border-radius:50%;border:1px solid #b9c8ec;box-shadow:0 0 10px #6078b777;background:#0a1021}
+.moon-phase span{display:none}
+.phase-new{left:28%;top:26%}.phase-crescent{right:27%;top:27%}.phase-half{left:28%;bottom:24%}.phase-full{right:27%;bottom:23%}
+.phase-new i{background:#080d19}
+.phase-crescent i{background:radial-gradient(circle at 68% 50%,#e7edff 0 36%,transparent 38%),#080d19}
+.phase-half i{background:linear-gradient(90deg,#e7edff 0 50%,#080d19 50%)}
+.phase-full i{background:#e7edff;box-shadow:0 0 13px #a8baff}
+.beam{position:absolute;z-index:1;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(172,195,255,.05),rgba(172,195,255,.32),rgba(172,195,255,.05))}
+.beam-a{left:14%;top:25%;width:38%;transform:rotate(18deg)}
+.beam-b{left:51%;top:43%;width:38%;transform:rotate(-18deg)}
+.beam-c{left:15%;top:73%;width:39%;transform:rotate(-23deg)}
+.beam-d{left:51%;top:48%;width:39%;transform:rotate(24deg)}
+@media(max-width:650px){.window{width:55px;height:67px}.window b{font-size:1.15rem}.secB-moon{font-size:4.3rem}.moon-phase{transform:scale(.82)}}
+
+
+/* v22.3 SECURITY B — clearer moon phase silhouettes */
+#sb .phase-new i{
+  background:#050812 !important;
+  border-color:#3a4767 !important;
+  box-shadow:0 0 5px rgba(70,90,140,.22) !important;
+}
+#sb .phase-crescent i{
+  background:
+    radial-gradient(circle at 72% 50%, #eef3ff 0 30%, transparent 32%),
+    #050812 !important;
+  border-color:#8191bb !important;
+  box-shadow:0 0 8px rgba(157,178,235,.42) !important;
+}
+#sb .phase-half i{
+  background:linear-gradient(90deg,#eef3ff 0 50%,#050812 50% 100%) !important;
+  border-color:#9eafd7 !important;
+  box-shadow:0 0 10px rgba(170,190,245,.45) !important;
+}
+#sb .phase-full i{
+  background:#eef3ff !important;
+  border-color:#dce6ff !important;
+  box-shadow:0 0 14px rgba(190,207,255,.75),0 0 24px rgba(130,155,255,.35) !important;
+}
+
+
+/* v22.4 SECURITY B — rebuilt moon phase icons */
+#sb .moon-phase i{
+  position:relative !important;
+  display:block !important;
+  width:34px !important;
+  height:34px !important;
+  overflow:hidden !important;
+  border-radius:50% !important;
+  background:#f3f6ff !important;
+  border:1px solid #c8d5f4 !important;
+  box-shadow:0 0 12px rgba(175,195,255,.48) !important;
+}
+#sb .moon-phase i em{
+  position:absolute;
+  display:block;
+  border-radius:50%;
+  background:#050812;
+}
+
+/* 1: NEW — almost entirely dark */
+#sb .phase-new i{
+  background:#050812 !important;
+  border-color:#4b5878 !important;
+  box-shadow:0 0 5px rgba(80,100,150,.2) !important;
+}
+#sb .phase-new i em{display:none}
+
+/* 2: CRESCENT — unmistakably thin bright crescent on the RIGHT */
+#sb .phase-crescent i em{
+  width:34px;height:34px;
+  left:-7px;top:0;
+}
+#sb .phase-crescent i{
+  background:#f3f6ff !important;
+}
+
+/* 3rd visual stage: HALF — exact 50/50 split */
+#sb .phase-half i{
+  background:linear-gradient(90deg,#050812 0 50%,#f3f6ff 50% 100%) !important;
+}
+#sb .phase-half i em{display:none}
+
+/* 4th visual stage: FULL — completely bright */
+#sb .phase-full i{
+  background:#f3f6ff !important;
+  border-color:#edf3ff !important;
+  box-shadow:0 0 16px rgba(205,218,255,.9),0 0 30px rgba(125,155,255,.45) !important;
+}
+#sb .phase-full i em{display:none}
+
+
+/* v22.5 SECURITY B — 3 is almost full, sequence 3→4→2→1 */
+#sb .phase-at-1{left:28% !important;top:26% !important}
+#sb .phase-at-2{right:27% !important;top:27% !important}
+#sb .phase-at-4{left:28% !important;bottom:24% !important}
+#sb .phase-at-3{right:27% !important;bottom:23% !important}
+
+/* Near-full moon: deliberately leave a small dark bite so it cannot be mistaken
+   for the large central full moon. */
+#sb .phase-gibbous i{
+  position:relative !important;
+  display:block !important;
+  width:34px !important;height:34px !important;
+  overflow:hidden !important;border-radius:50% !important;
+  background:#f3f6ff !important;
+  border:1px solid #dce6ff !important;
+  box-shadow:0 0 13px rgba(205,218,255,.75),0 0 22px rgba(125,155,255,.32) !important;
+}
+#sb .phase-gibbous i em{
+  position:absolute !important;
+  display:block !important;
+  width:34px !important;height:34px !important;
+  border-radius:50% !important;
+  background:#050812 !important;
+  left:-27px !important;top:0 !important;
+}
+
+
+/* v22.6 SECURITY B — moonlight beams aligned to each phase icon */
+#sb .beam{
+  transform-origin:left center !important;
+  height:2px !important;
+  background:linear-gradient(
+    90deg,
+    rgba(190,205,255,.08),
+    rgba(190,205,255,.36) 55%,
+    rgba(190,205,255,.10)
+  ) !important;
+  box-shadow:0 0 7px rgba(130,155,255,.18);
+}
+
+#sb .beam-a{left:50.0% !important;top:45.0% !important;width:24.46% !important;transform:rotate(-154.09deg) !important;}
+#sb .beam-b{left:50.0% !important;top:45.0% !important;width:25.13% !important;transform:rotate(-23.76deg) !important;}
+#sb .beam-c{left:50.0% !important;top:45.0% !important;width:28.07% !important;transform:rotate(141.60deg) !important;}
+#sb .beam-d{left:50.0% !important;top:45.0% !important;width:29.21% !important;transform:rotate(38.05deg) !important;}
+
+
+/* v23.0 SECURITY C — interactive lunar cipher */
+.security-c-v1{padding:22px;border:1px solid rgba(80,135,255,.42);background:linear-gradient(145deg,#020817,#060c20)}
+.secC-instruction{text-align:center;color:#eef4ff;font-weight:800;letter-spacing:.08em;font-size:clamp(1rem,2.4vw,1.3rem);margin-bottom:18px}
+.cipher-console{width:min(100%,760px);margin:auto;padding:20px;border:1px solid #3e5f9b;border-radius:14px;background:radial-gradient(circle at 50% 40%,#101c3b,#030816 65%);box-shadow:inset 0 0 38px #25427a22}
+.cipher-readout,.cipher-output{text-align:center}
+.cipher-readout small,.cipher-output small,.cipher-controls small{display:block;color:#6e89bb;letter-spacing:.2em;font-size:.58rem}
+.cipher-readout strong{font-size:1.35rem;letter-spacing:.45em;color:#e8efff}
+.cipher-output b{font-size:1.4rem;letter-spacing:.42em;color:#dfe8ff;text-shadow:0 0 9px #7395e866}
+.cipher-wrap{position:relative;width:min(78vw,430px);aspect-ratio:1;margin:15px auto}
+.cipher-ring{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%);transition:transform .22s ease}
+.outer-ring{width:100%;height:100%;border:2px solid #607fb9;box-shadow:0 0 20px #5279cf33,inset 0 0 25px #5279cf22}
+.inner-ring{width:72%;height:72%;border:2px solid #7d92bd;box-shadow:inset 0 0 24px #627fc344}
+.cipher-letter{position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px;display:grid;place-items:center;color:#aebddd;font:700 .72rem Georgia,serif;text-shadow:0 0 6px #7996d655}
+.inner-ring .cipher-letter{color:#e0e8f8}
+.cipher-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:31%;height:31%;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle,#172750,#060c1c 70%);border:1px solid #647db1;box-shadow:0 0 25px #688ee044}
+.core-moon{font-size:2.8rem;color:#edf3ff;text-shadow:0 0 16px #9bb5ff}
+.cipher-core small{position:absolute;bottom:17%;font-size:.48rem;letter-spacing:.12em;color:#7188b3}
+.cipher-marker{position:absolute;z-index:10;left:50%;top:-5px;transform:translateX(-50%);color:#dfe8ff;text-shadow:0 0 10px #88aaff;font-size:1.2rem}
+.cipher-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin:5px 0 14px}
+.cipher-controls button{width:54px;padding:9px 0;margin:0}
+.cipher-controls div{text-align:center;min-width:70px}
+.cipher-controls b{font-size:1.25rem;color:#e8efff}
+
+
+/* v23.1 SECURITY C — crater-count shift puzzle */
+#sc .crater-core{
+  overflow:visible;
+}
+#sc .crater-moon{
+  position:absolute;
+  left:50%;top:45%;
+  transform:translate(-50%,-50%);
+  width:72%;height:72%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.24),transparent 20%),
+    radial-gradient(circle at 60% 65%,rgba(105,125,175,.25),transparent 30%),
+    #dce5f7;
+  border:1px solid #eef4ff;
+  box-shadow:0 0 15px rgba(180,200,255,.55), inset -8px -7px 15px rgba(50,65,105,.28);
+}
+#sc .crater{
+  position:absolute;
+  display:block;
+  border-radius:50%;
+  box-sizing:border-box;
+}
+/* Five true "wounds": same recessed crater treatment */
+#sc .crater.target{
+  background:radial-gradient(circle at 38% 36%,#7788ad 0 28%,#536586 31% 58%,#aebbd3 61% 72%,#667795 75%);
+  box-shadow:inset 1px 1px 3px rgba(20,30,55,.65),0 0 2px rgba(255,255,255,.35);
+}
+/* Two surface markings: deliberately flatter/lighter, not crater-shaped depressions */
+#sc .crater.decoy{
+  background:rgba(112,132,170,.28);
+  border:1px solid rgba(140,160,195,.25);
+  box-shadow:none;
+  filter:blur(.15px);
+}
+#sc .c1{width:17%;height:17%;left:18%;top:18%}
+#sc .c2{width:12%;height:12%;left:57%;top:15%}
+#sc .c3{width:20%;height:20%;left:50%;top:43%}
+#sc .c4{width:13%;height:13%;left:22%;top:58%}
+#sc .c5{width:10%;height:10%;left:66%;top:68%}
+#sc .c6{width:9%;height:6%;left:40%;top:28%;border-radius:55% 45% 60% 40%}
+#sc .c7{width:12%;height:7%;left:37%;top:72%;border-radius:45% 60% 40% 55%}
+#sc .cipher-core small{
+  bottom:8% !important;
+  color:#657da8 !important;
+  text-shadow:0 1px 2px rgba(255,255,255,.35);
+}
+
+
+#sc .cipher-wrap.cipher-detent .inner-ring{
+  box-shadow:inset 0 0 24px #627fc344,0 0 13px rgba(145,170,235,.22);
+}
+
+
+/* v23.2 SECURITY C — seven similar craters, five share one light direction */
+#sc .crater{
+  position:absolute !important;
+  display:block !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+  background:#7182a5 !important;
+  border:1px solid rgba(210,222,246,.34) !important;
+}
+
+/* Five craters: light catches upper-left rim, shadow falls lower-right. */
+#sc .crater.target{
+  background:
+    radial-gradient(circle at 34% 31%,
+      rgba(220,230,248,.72) 0 9%,
+      rgba(126,145,181,.82) 12% 30%,
+      #596b8f 34% 62%,
+      #405171 66% 78%,
+      rgba(173,190,220,.72) 81% 100%) !important;
+  box-shadow:
+    inset -2px -2px 4px rgba(25,34,58,.72),
+    inset 2px 2px 3px rgba(220,230,248,.24),
+    1px 1px 2px rgba(15,22,42,.28) !important;
+}
+
+/* Two craters look equally real, but their lighting is reversed. */
+#sc .crater.decoy{
+  background:
+    radial-gradient(circle at 66% 69%,
+      rgba(220,230,248,.72) 0 9%,
+      rgba(126,145,181,.82) 12% 30%,
+      #596b8f 34% 62%,
+      #405171 66% 78%,
+      rgba(173,190,220,.72) 81% 100%) !important;
+  border:1px solid rgba(210,222,246,.34) !important;
+  box-shadow:
+    inset 2px 2px 4px rgba(25,34,58,.72),
+    inset -2px -2px 3px rgba(220,230,248,.24),
+    -1px -1px 2px rgba(15,22,42,.28) !important;
+  filter:none !important;
+}
+
+/* Make sizes less diagnostic: all craters are within a narrow range. */
+#sc .c1{width:15% !important;height:15% !important;left:17% !important;top:18% !important}
+#sc .c2{width:13% !important;height:13% !important;left:57% !important;top:16% !important}
+#sc .c3{width:16% !important;height:16% !important;left:50% !important;top:43% !important}
+#sc .c4{width:14% !important;height:14% !important;left:22% !important;top:58% !important}
+#sc .c5{width:12% !important;height:12% !important;left:66% !important;top:67% !important}
+#sc .c6{width:13% !important;height:13% !important;left:39% !important;top:27% !important;border-radius:50% !important}
+#sc .c7{width:14% !important;height:14% !important;left:38% !important;top:71% !important;border-radius:50% !important}
+
+/* A tiny engraved light-direction reference on the moon core:
+   deliberately not an explanatory label. */
+#sc .crater-core::before{
+  content:"◔";
+  position:absolute;
+  right:9%;
+  top:8%;
+  z-index:4;
+  color:rgba(221,231,252,.72);
+  font-size:.72rem;
+  text-shadow:0 0 5px rgba(150,175,235,.4);
+}
+
+
+/* v23.3 SECURITY C — five subtle moon craters */
+#sc .crater.target{
+  opacity:.48 !important;
+  background:
+    radial-gradient(circle at 37% 34%,
+      rgba(228,235,249,.34) 0 10%,
+      rgba(133,150,181,.38) 14% 31%,
+      rgba(83,101,139,.48) 36% 61%,
+      rgba(63,79,112,.42) 65% 77%,
+      rgba(173,187,213,.28) 81% 100%) !important;
+  border:1px solid rgba(202,214,238,.18) !important;
+  box-shadow:
+    inset -1px -1px 3px rgba(27,37,63,.38),
+    inset 1px 1px 2px rgba(231,237,249,.15) !important;
+}
+/* Remove the old direction-reference symbol; with five actual craters it is no longer needed. */
+#sc .crater-core::before{content:none !important}
+
+
+.security-d-v1{padding:22px;border:1px solid rgba(80,135,255,.42);background:linear-gradient(145deg,#020817,#060c20)}
+.secD-instruction{text-align:center;color:#eef4ff;font-weight:800;letter-spacing:.08em;font-size:clamp(1rem,2.4vw,1.3rem);margin-bottom:18px}
+.archive-console{width:min(100%,820px);margin:auto;border:1px solid #405f99;border-radius:12px;overflow:hidden;background:repeating-linear-gradient(0deg,rgba(92,125,194,.025) 0 1px,transparent 1px 30px),linear-gradient(160deg,#030918,#071126);box-shadow:inset 0 0 34px rgba(40,77,145,.16)}
+.archive-head{display:flex;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:1px solid #2c4778;color:#6f8cbe;font-size:.62rem;letter-spacing:.12em}
+.archive-head b{color:#91a9d1;font-size:.6rem}.archive-row{display:grid;grid-template-columns:1fr 1.25fr 52px;align-items:center;min-height:68px;padding:0 16px;border-bottom:1px solid rgba(61,88,139,.35)}
+.archive-id{font-size:.7rem;letter-spacing:.14em;color:#758db6}.archive-data{text-align:center;font-family:Georgia,"Times New Roman",serif;font-weight:800;font-size:clamp(1.3rem,3vw,2rem);letter-spacing:.28em;color:#dce6f7}
+.archive-data .noise{display:inline-block;color:#eef4ff;text-shadow:0 0 8px #8eabef,0 0 18px #567bd3;border-bottom:1px solid rgba(154,180,240,.55)}
+.archive-mark{justify-self:end;border:1px solid #3f5f96;padding:6px 5px;border-radius:4px;color:#8ea7d1;font-size:.66rem}
+.archive-divider{height:10px;background:linear-gradient(90deg,transparent,#385b9a55,transparent)}.archive-key{padding:15px;text-align:center}.archive-key>span,.archive-output small{font-size:.58rem;letter-spacing:.2em;color:#627ca8}
+.trace-seq{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:9px}.trace-seq i{font-style:normal;border:1px solid #4d6da5;border-radius:50%;width:37px;height:37px;display:grid;place-items:center;color:#d6e0f3;background:#09132a}.trace-seq b{color:#5e78a8;font-weight:400}
+.archive-output{margin:0 15px 16px;padding:14px;border:1px dashed #395888;text-align:center;background:#030816}.archive-output small{display:block;margin-bottom:8px}.archive-output strong{display:flex;justify-content:center;gap:10px}.archive-output strong span{width:38px;height:38px;display:grid;place-items:center;border:1px solid #344f7c;color:#7087ad;background:#071020;font-size:1.2rem}
+@media(max-width:600px){.archive-row{grid-template-columns:.9fr 1fr 42px;padding:0 10px}.archive-data{letter-spacing:.14em}.archive-head{font-size:.5rem}}
+
+
+/* v24.1 SECURITY D — no highlighted answer characters */
+#sd .archive-data .noise{
+  color:inherit !important;text-shadow:none !important;border:0 !important;
+}
+#sd .trace-records{
+  display:flex;justify-content:center;gap:clamp(12px,4vw,34px);margin-top:12px;
+}
+#sd .trace-records>div{
+  min-width:78px;padding:10px 8px;border:1px solid rgba(65,94,145,.55);
+  background:#061027;border-radius:6px;
+}
+#sd .trace-records small{
+  display:block;color:#637da9;font-size:.52rem;letter-spacing:.12em;margin-bottom:7px;
+}
+#sd .trace-records i{
+  display:grid;margin:auto;place-items:center;width:38px;height:38px;border-radius:50%;
+  border:1px solid #4d6da5;color:#d6e0f3;background:#09132a;font-style:normal;
+}
+
+
+/* v24.2 SECURITY D — one consistent extraction rule */
+.security-d-v2{padding:22px;border:1px solid rgba(80,135,255,.42);background:linear-gradient(145deg,#020817,#060c20)}
+#sd .archive-legend{
+  padding:13px 15px 15px;border-bottom:1px solid rgba(61,88,139,.35);
+  background:rgba(4,11,27,.72);text-align:center
+}
+#sd .archive-legend>small{
+  color:#607aa7;font-size:.54rem;letter-spacing:.2em
+}
+#sd .legend-items{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-top:9px
+}
+#sd .legend-items span{
+  display:flex;align-items:center;gap:5px;padding:5px 8px;
+  border:1px solid rgba(66,94,145,.46);border-radius:4px;background:#071126
+}
+#sd .legend-items i{
+  font-style:normal;color:#dbe5f7;font-size:.9rem;text-shadow:0 0 6px rgba(130,155,220,.4)
+}
+#sd .legend-items b{
+  color:#6e87b1;font-size:.58rem;font-weight:600
+}
+#sd .lunar-index{
+  font-size:1.35rem !important;color:#dbe5f7 !important;text-shadow:0 0 8px rgba(130,155,220,.35)
+}
+
+
+/* v24.3 SECURITY D — three-stage archive reconstruction */
+#sd .lunar-trace .moon-sequence{
+  display:flex;justify-content:center;align-items:center;flex-wrap:nowrap;
+  gap:clamp(5px,1.8vw,13px);margin-top:11px
+}
+#sd .moon-sequence i{
+  font-style:normal;color:#dce6f7;font-size:clamp(.9rem,2.5vw,1.25rem);
+  text-shadow:0 0 6px rgba(132,158,220,.34)
+}
+#sd .moon-sequence b{
+  color:#4e6791;font-weight:400;font-size:.8rem
+}
+#sd .archive-id small{
+  display:block;margin-top:5px;color:#50698f;font-size:.48rem;letter-spacing:.12em
+}
+#sd .archive-output strong span{
+  color:#7389ae !important;font-size:.65rem !important;letter-spacing:.08em;
+  border-style:dashed !important
+}
+#sd .archive-head b{
+  color:#8b7897 !important;text-shadow:0 0 7px rgba(160,120,180,.18)
+}
+@media(max-width:520px){
+  #sd .moon-sequence{gap:5px}
+  #sd .archive-id{font-size:.58rem}
+  #sd .archive-id small{font-size:.4rem}
+}
+
+
+/* v24.4 SECURITY D — clear trace index, puzzle remains extraction + restoration */
+#sd .trace-index-key .index-sequence{
+  display:flex;justify-content:center;align-items:center;flex-wrap:nowrap;
+  gap:clamp(6px,2vw,14px);margin-top:11px
+}
+#sd .index-sequence i{
+  font-style:normal;color:#dce6f7;font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(.9rem,2.5vw,1.18rem);text-shadow:0 0 6px rgba(132,158,220,.34)
+}
+#sd .index-sequence b{color:#4e6791;font-weight:400;font-size:.8rem}
+#sd .trace-index{
+  font-family:Georgia,"Times New Roman",serif;font-size:1.05rem !important;
+  color:#dbe5f7 !important;text-shadow:0 0 7px rgba(130,155,220,.3)
+}
+/* suppress obsolete moon-sequence styling if inherited from v24.3 */
+#sd .moon-sequence{display:none !important}
+
+
+/* v24.5 SECURITY D — trace-signature matching */
+.security-d-v4{
+  padding:22px;border:1px solid rgba(80,135,255,.42);
+  background:linear-gradient(145deg,#020817,#060c20)
+}
+#sd .trace-signature{
+  padding:14px 15px 16px;text-align:center;
+  border-bottom:1px solid rgba(61,88,139,.35);
+  background:rgba(4,11,27,.72)
+}
+#sd .trace-signature small{
+  display:block;color:#607aa7;font-size:.54rem;letter-spacing:.2em;margin-bottom:10px
+}
+#sd .signature-key{display:flex;justify-content:center;gap:12px}
+#sd .signature-key i,#sd .trace-pattern i{
+  font-style:normal;color:#dce6f7;text-shadow:0 0 6px rgba(132,158,220,.28)
+}
+#sd .signature-key i{font-size:1.15rem}
+#sd .archive-row-v4{
+  grid-template-columns:1fr 1.55fr !important;
+  min-height:84px !important
+}
+#sd .archive-stack{display:grid;gap:8px;align-items:center}
+#sd .trace-pattern{
+  display:grid;gap:0;width:100%;max-width:360px;margin:0 auto
+}
+#sd .trace-pattern.p4{grid-template-columns:repeat(4,1fr)}
+#sd .trace-pattern.p6{grid-template-columns:repeat(6,1fr)}
+#sd .trace-pattern i{
+  text-align:center;font-size:.72rem;color:#7188ae;text-shadow:none
+}
+#sd .archive-id small{
+  display:block;margin-top:5px;color:#50698f;font-size:.48rem;letter-spacing:.12em
+}
+#sd .archive-output strong span{
+  color:#7389ae !important;font-size:.65rem !important;letter-spacing:.08em;
+  border-style:dashed !important
+}
+@media(max-width:600px){
+  #sd .archive-row-v4{grid-template-columns:.85fr 1.4fr !important}
+  #sd .trace-pattern i{font-size:.62rem}
+}
+
+#sd .d6-system-note{margin:4px 16px 16px;padding:11px 12px;border:1px solid rgba(68,98,153,.42);background:#040b19;color:#8098bf;text-align:center;font-size:.64rem;letter-spacing:.08em}
+.penalty-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(2,3,8,.93);backdrop-filter:blur(5px)}.penalty-overlay.show{display:flex}.penalty-panel{width:min(560px,92vw);padding:30px 24px;text-align:center;border:1px solid #ff4352;background:linear-gradient(#1f050c,#05070e);box-shadow:0 0 40px rgba(255,38,57,.22)}.penalty-alert,.penalty-timer{color:#ff5363;font-weight:800;letter-spacing:.18em}.penalty-panel h2{color:#fff}.penalty-panel p,.penalty-panel small{color:#aeb4c0}.penalty-villain{margin:20px 0;padding:14px;border-block:1px solid rgba(255,80,90,.25);color:#e6dce1;font-family:serif}.penalty-timer{font:800 2rem monospace;text-shadow:0 0 12px rgba(255,60,75,.45)}#c2 input:disabled,#c2 button:disabled{opacity:.45;cursor:not-allowed}
+/* v24.9 SECURITY D — A/B/C archive synthesis */
+.security-d-v5{padding:22px;border:1px solid rgba(80,135,255,.42);background:linear-gradient(145deg,#020817,#060c20)}
+#sd .d5-records{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px}
+#sd .d5-record{padding:15px 12px;border:1px solid rgba(68,98,153,.48);background:#061027;text-align:center}
+#sd .d5-record small{display:block;color:#607aa7;font-size:.55rem;letter-spacing:.15em}
+#sd .d5-record strong{display:block;margin:8px 0 10px;color:#edf3ff;font-size:1.25rem;letter-spacing:.16em}
+#sd .d5-record span{display:block;color:#6d84ac;font-size:.52rem;letter-spacing:.14em}
+#sd .crater-trace{display:flex;justify-content:center;gap:6px;margin-top:9px}
+#sd .crater-trace i{width:12px;height:12px;border-radius:50%;background:#536686;box-shadow:inset -1px -1px 2px #26344f,inset 1px 1px 2px #8fa0bd}
+#sd .d5-wordlist{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:14px 16px}
+#sd .d5-wordlist div{padding:10px 6px;border:1px solid rgba(68,98,153,.42);background:#050d1e;text-align:center}
+#sd .d5-wordlist b{display:block;color:#58719b;font-size:.55rem}
+#sd .d5-wordlist span{display:block;margin-top:4px;color:#dce6f7;font-size:.8rem;letter-spacing:.1em}
+.narcy-arts-dialogue{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(2,3,9,.78);backdrop-filter:blur(4px);opacity:0;transition:opacity .2s}
+.narcy-arts-dialogue.show{opacity:1}
+.narcy-arts-box{width:min(620px,92vw);padding:26px 24px;border:1px solid rgba(154,113,221,.58);background:linear-gradient(145deg,#140b24,#070a14);box-shadow:0 0 35px rgba(123,75,205,.28);text-align:center}
+.narcy-arts-name{color:#a78ada;font-size:.7rem;letter-spacing:.16em;margin-bottom:12px}
+.narcy-arts-box p{margin:0;color:#f2edff;font-family:serif;font-size:clamp(1.05rem,3vw,1.45rem);line-height:1.8}
+@media(max-width:650px){
+  #sd .d5-records{grid-template-columns:1fr}
+  #sd .d5-wordlist{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+
+/* v24.16 SECURITY D — guided archive reconstruction */
+#sd .d6-guide{display:flex;align-items:center;gap:12px;margin:14px 16px 4px;padding:10px 12px;border-left:3px solid #6f8fc9;background:rgba(18,34,66,.58);color:#cbd8ee}
+#sd .d6-guide b{flex:0 0 auto;color:#8eabd8;font-size:.62rem;letter-spacing:.14em}
+#sd .d6-guide span{font-size:.78rem;line-height:1.65;letter-spacing:.03em}
+#sd .d6-status strong{color:#e6efff !important;font-size:.82rem !important;letter-spacing:.12em !important}
+@media(max-width:520px){#sd .d6-guide{align-items:flex-start;gap:8px;margin-inline:10px;padding:9px 10px}#sd .d6-guide span{font-size:.72rem}}
+
+/* v24.10 FIX — hidden Nar-C overlay must never block the site */
+.narcy-arts-dialogue[hidden]{
+  display:none !important;
+  pointer-events:none !important;
+}
+.narcy-arts-dialogue{
+  pointer-events:none;
+}
+.narcy-arts-dialogue.show{
+  display:flex !important;
+  pointer-events:auto;
+}
+
+
+/* v24.14 SECURITY D — hidden past codes / archive recall */
+#sd .d6-status{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;padding:16px
+}
+#sd .d6-status div{
+  padding:13px 9px;text-align:center;border:1px solid rgba(68,98,153,.4);
+  background:#061027
+}
+#sd .d6-status small{
+  display:block;color:#607aa7;font-size:.54rem;letter-spacing:.14em
+}
+#sd .d6-status strong{
+  display:block;margin-top:7px;color:#7890b6;font-size:.66rem;letter-spacing:.09em
+}
+#sd .d6-trace{
+  padding:15px 16px 5px;text-align:center
+}
+#sd .d6-trace small{
+  color:#5e759c;font-size:.54rem;letter-spacing:.17em
+}
+#sd .d6-trace .crater-trace{
+  display:flex;justify-content:center;gap:9px;margin:12px auto 5px
+}
+#sd .d6-trace .crater-trace i{
+  width:15px;height:15px;border-radius:50%;
+  background:#536686;
+  box-shadow:inset -2px -2px 3px #26344f,inset 2px 2px 3px #8fa0bd;
+  opacity:.72
+}
+#sd .d6-wordlist{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:7px;padding:14px 16px
+}
+#sd .d6-wordlist div{
+  padding:10px 6px;border:1px solid rgba(68,98,153,.42);
+  background:#050d1e;text-align:center
+}
+#sd .d6-wordlist b{display:block;color:#58719b;font-size:.55rem}
+#sd .d6-wordlist span{
+  display:block;margin-top:4px;color:#dce6f7;font-size:.8rem;letter-spacing:.1em
+}
+@media(max-width:650px){
+  #sd .d6-status{grid-template-columns:1fr}
+  #sd .d6-wordlist{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+#final .final-moon-console{border:1px solid #6d85ba6b;background:#05091a;padding:15px}#final .final-console-head{display:flex;justify-content:space-between;color:#667da8;font-size:.58rem;margin-bottom:16px}#final .dango-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;max-width:650px;margin:auto}#final .dango{position:relative;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#f5f0df,#d7d0bd 58%,#938b7d);color:#1c2130}#final .dango small{position:absolute;top:8px;font:.5rem monospace;opacity:.45}#final .dango>span{font-weight:800}.phase{position:absolute;right:8px;bottom:8px;width:18px;height:18px;border-radius:50%;background:#192034;overflow:hidden}.phase-crescent:after{content:'';position:absolute;width:15px;height:15px;border-radius:50%;background:#e8e3d6;left:6px;top:1px}.phase-half{background:linear-gradient(90deg,#e8e3d6 50%,#192034 50%)}.phase-full{background:#e8e3d6}.phase-new{background:#171b29}#final .final-path{display:flex;justify-content:center;gap:12px;margin:19px;color:#8498bd}.final-restore-overlay[hidden]{display:none!important;pointer-events:none!important}.final-restore-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#01030a;opacity:0;transition:.3s}.final-restore-overlay.show{opacity:1}.restore-panel{width:min(760px,90vw);padding:32px;text-align:center;border:1px solid #6989be73;background:#020712;color:#d8e1ef}.restore-main{margin:25px}.restore-main strong{font-size:clamp(2rem,7vw,4rem);color:#edf4ff}
+#final .final-kicker{font-weight:900;letter-spacing:.04em;margin-bottom:6px}#final .final-sub{color:#91a1bf;font-size:.9rem;margin-bottom:18px}#final .final-console{border:1px solid rgba(104,132,188,.45);background:linear-gradient(145deg,#040817,#090d20);padding:16px;border-radius:12px}#final .final-console-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#6f82a8;font:700 .58rem monospace;letter-spacing:.11em;margin-bottom:14px}#final .moon-orbit-wrap{position:relative;width:min(680px,94vw);aspect-ratio:1;margin:0 auto}#final .orbit-ring{position:absolute;inset:9%;border:1px solid rgba(110,137,190,.25);border-radius:50%}#final .orbit-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff8dc,#d9d1aa 62%,#887f65);color:#1e2432;box-shadow:0 0 30px rgba(240,230,185,.25)}#final .orbit-center span{font-size:.7rem;font-weight:800;opacity:.7}#final .orbit-center strong{font-size:clamp(1.4rem,4vw,2.4rem)}#final .final-node{position:absolute;width:12%;aspect-ratio:1;border-radius:50%;border:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#f5efdc,#d6ceb8 58%,#8b8374);color:#1d2330;box-shadow:0 5px 12px rgba(0,0,0,.34);padding:0}#final .final-node small{position:absolute;top:9%;font:700 .48rem monospace;opacity:.4}#final .final-node b{font-size:clamp(.75rem,2vw,1rem)}#final .key-node{box-shadow:0 5px 12px rgba(0,0,0,.34),0 0 0 1px rgba(206,217,242,.16)}#final .start-node{box-shadow:0 0 0 2px rgba(222,229,246,.32),0 0 24px rgba(164,185,238,.18)}#final .moonmark{position:absolute;right:6%;bottom:7%;width:24%;aspect-ratio:1;border-radius:50%;background:#171c2b;overflow:hidden}#final .moon-full{background:#efe8cf;box-shadow:0 0 8px rgba(246,238,206,.55)}#final .moon-new{background:#151a28;border:1px solid rgba(230,236,255,.28)}#final .moon-half{background:linear-gradient(90deg,#efe8cf 50%,#151a28 50%)}#final .moon-crescent:after{content:"";position:absolute;width:88%;height:88%;border-radius:50%;background:#efe8cf;left:38%;top:6%}#final .moon-gibbous{background:#efe8cf}#final .moon-gibbous:after{content:"";position:absolute;width:60%;height:100%;border-radius:50%;background:#151a28;left:-28%;top:0}
+#final .final-node:nth-child(3){left:44%;top:2%}#final .final-node:nth-child(4){left:62%;top:6%}#final .final-node:nth-child(5){left:77%;top:17%}#final .final-node:nth-child(6){left:86%;top:33%}#final .final-node:nth-child(7){left:86%;top:52%}#final .final-node:nth-child(8){left:78%;top:69%}#final .final-node:nth-child(9){left:63%;top:81%}#final .final-node:nth-child(10){left:44%;top:86%}#final .final-node:nth-child(11){left:25%;top:82%}#final .final-node:nth-child(12){left:10%;top:70%}#final .final-node:nth-child(13){left:2%;top:53%}#final .final-node:nth-child(14){left:2%;top:34%}#final .final-node:nth-child(15){left:10%;top:17%}#final .final-node:nth-child(16){left:25%;top:6%}#final .final-node:nth-child(17){left:35%;top:1%}#final .final-rule-log{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px auto 8px;max-width:700px}#final .final-rule-log div{border:1px solid #263654;background:#060b19;padding:10px}#final .final-rule-log span{display:block;color:#61769d;font:700 .5rem monospace}#final .final-rule-log b{display:block;margin-top:4px;color:#dbe5f7}#final .final-trace{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;color:#7f94bc;font:800 .9rem monospace}#final .final-trace span{min-width:32px;padding:6px 8px;border:1px solid #2b3c5b;background:#050a16}.final-restore-overlay[hidden]{display:none!important;pointer-events:none!important}.final-restore-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#01030a;opacity:0;transition:opacity .25s;overflow:hidden}.final-restore-overlay.show{opacity:1}.restore-noise{position:absolute;inset:0;opacity:.07;background:repeating-linear-gradient(0deg,transparent 0 3px,#fff 4px,transparent 5px)}.restore-panel{position:relative;width:min(760px,90vw);padding:30px;text-align:center;border:1px solid rgba(105,137,190,.45);background:rgba(2,7,18,.95)}.restore-line{font:800 clamp(.72rem,2vw,1rem) monospace;letter-spacing:.12em;color:#91a8cc;margin:8px 0}.restore-line.danger{color:#c28d8d}.restore-code{margin:10px 0 18px;font:900 clamp(.8rem,2.4vw,1.1rem) monospace;color:#dbe6f7}.restore-moon{width:min(180px,38vw);aspect-ratio:1;margin:16px auto;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7d8,#dfd4aa 64%,#8b8164);box-shadow:0 0 35px rgba(241,228,181,.35)}.restore-security{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:22px auto;max-width:480px}.restore-security span{padding:8px;border:1px solid #27364e;font:.65rem monospace;color:#7083a3}.restore-main{margin-top:20px;color:#a9b8d1;font:800 clamp(.9rem,2.4vw,1.2rem) monospace}.restore-main strong{display:block;margin-top:6px;font-size:clamp(2rem,7vw,4rem);color:#edf4ff}.restore-jp{margin-top:16px;color:#d8e1ef;font-weight:700}.clear-report{margin:22px auto 0;max-width:560px;padding:18px 16px;border:1px solid rgba(121,154,211,.45);background:#071024}.clear-report-title{font-weight:900;font-size:1.05rem;color:#eef4ff;margin-bottom:8px}.clear-report-note{font-size:.86rem;line-height:1.7;color:#aebdd8}.clear-report-btn{display:inline-block;margin-top:14px;padding:13px 22px;border-radius:8px;background:#edf4ff;color:#081126!important;text-decoration:none!important;font-weight:900;letter-spacing:.04em}.clear-report-btn:hover{filter:brightness(.92)}.clear-report-zoom{margin-top:12px;font-size:.82rem;color:#91a8cc}#final .final-node.final-picked{box-shadow:0 0 0 2px rgba(238,244,255,.55),0 0 22px rgba(181,203,255,.35);transform:scale(1.05)}#final .final-memory-reveal{margin:18px auto 0;max-width:620px;padding:15px;border:1px solid rgba(110,137,190,.42);background:#050a16}#final .memory-head{font:800 .65rem monospace;letter-spacing:.12em;color:#8198c0}#final .memory-hint{margin:8px 0 14px;color:#dbe5f7;font-weight:800}#final .memory-cards{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}#final .memory-cards>span{position:relative;width:66px;height:66px;border:1px solid #304364;background:#091024;display:flex;align-items:center;justify-content:center}#final .memory-cards b{font-size:1.35rem;color:#edf3ff}#final .memory-cards .moonmark{width:18px;height:18px;right:5px;bottom:5px}@media(max-width:650px){#final .final-rule-log{grid-template-columns:1fr}}
+
+/* FINAL v24.19 — equal orbit / hidden node numbers / past authentication log */
+#final .moon-orbit-wrap{width:min(700px,94vw)}
+#final .final-node{width:11.5%;left:44.25%;top:44.25%;transform:rotate(var(--angle)) translateY(-385%) rotate(calc(-1 * var(--angle)));transform-origin:center;transition:box-shadow .18s,filter .18s}
+#final .final-node b{transform:none;font-size:clamp(.82rem,2vw,1.08rem)}
+#final .final-node small{display:none!important}
+#final .final-node.final-picked{transform:rotate(var(--angle)) translateY(-385%) rotate(calc(-1 * var(--angle))) scale(1.05)}
+#final .start-node{box-shadow:0 5px 12px rgba(0,0,0,.34)}
+#final .orbit-direction{position:absolute;inset:4%;pointer-events:none}
+#final .orbit-direction::before{content:"↻";position:absolute;right:3%;top:8%;font:800 clamp(1.2rem,3vw,1.7rem) monospace;color:#7890ba;opacity:.72;transform:rotate(18deg)}
+#final .orbit-origin{position:absolute;left:50%;top:25%;height:17%;width:1px;background:linear-gradient(to top,rgba(126,151,197,.55),rgba(126,151,197,0));transform:translateX(-50%);pointer-events:none}
+#final .orbit-origin::before{content:"";position:absolute;top:-2px;left:-4px;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid rgba(126,151,197,.65)}
+#final .past-auth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px auto 8px;max-width:700px}
+#final .past-auth-grid div{border:1px solid #263654;background:#060b19;padding:10px;text-align:center}
+#final .past-auth-grid span{display:block;color:#61769d;font:700 .5rem monospace}
+#final .past-auth-grid b{display:block;margin-top:4px;color:#dbe5f7;letter-spacing:.08em}
+#final .final-trace{display:none}
+@media(max-width:650px){#final .past-auth-grid{grid-template-columns:repeat(2,1fr)}#final .final-node{width:12.5%;left:43.75%;top:43.75%;transform:rotate(var(--angle)) translateY(-350%) rotate(calc(-1 * var(--angle)))}#final .final-node.final-picked{transform:rotate(var(--angle)) translateY(-350%) rotate(calc(-1 * var(--angle))) scale(1.05)}}
+
+
+.resume-btn{padding:14px 22px!important;font-size:1rem!important;font-weight:900!important;letter-spacing:.04em!important;color:#06131b!important;background:linear-gradient(180deg,#67e8f9,#22d3ee)!important;border:2px solid #a5f3fc!important;border-radius:14px!important;box-shadow:0 0 0 3px rgba(34,211,238,.12),0 0 24px rgba(34,211,238,.55)!important;text-shadow:none!important;animation:resumePulse 1.8s ease-in-out infinite!important}
+.resume-btn:hover{transform:translateY(-2px)!important;filter:brightness(1.12)!important;box-shadow:0 0 0 4px rgba(34,211,238,.16),0 0 34px rgba(34,211,238,.75)!important}
+@keyframes resumePulse{0%,100%{box-shadow:0 0 0 3px rgba(34,211,238,.10),0 0 20px rgba(34,211,238,.42)}50%{box-shadow:0 0 0 5px rgba(34,211,238,.18),0 0 34px rgba(34,211,238,.72)}}
+</style>
+
+<style>
+#final .story-moon-grid{display:grid;grid-template-columns:repeat(5,minmax(54px,1fr));gap:12px;max-width:720px;margin:22px auto}
+#final .story-moon{min-width:0;min-height:86px;margin:0;padding:10px 6px;font-size:2rem;line-height:1;border:1px solid rgba(120,220,240,.28);background:rgba(4,22,38,.78);border-radius:12px;transition:.18s transform,.18s box-shadow,.18s border-color}
+#final .story-moon small{display:block;margin-top:9px;font:700 .68rem/1 monospace;letter-spacing:.08em;opacity:.55}
+#final .story-moon:hover{transform:translateY(-2px);border-color:rgba(140,235,255,.65)}
+#final .story-moon.picked{border-color:#b8f5ff;box-shadow:0 0 18px rgba(130,235,255,.45);background:rgba(15,70,86,.78)}
+#final .story-moon.wrong{animation:storyShake .28s linear}
+@keyframes storyShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#final .memory-story{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:800px;margin:18px auto}
+#final .memory-fragment{min-height:92px;padding:12px 8px;border:1px solid rgba(125,220,235,.25);background:rgba(0,20,35,.55);display:flex;flex-direction:column;justify-content:center;gap:8px}
+#final .memory-fragment b{font:700 .7rem monospace;opacity:.5}#final .memory-fragment span{font-weight:700;line-height:1.5}
+#final .story-question{max-width:680px;margin:18px auto 4px;padding:16px;border:1px solid rgba(180,245,255,.5);background:rgba(8,42,56,.75)}
+@media(max-width:600px){#final .story-moon-grid{grid-template-columns:repeat(3,1fr);gap:8px}#final .story-moon{min-height:72px;font-size:1.65rem}#final .memory-story{grid-template-columns:1fr}.memory-fragment{min-height:58px!important}}
+</style>
+<style>
+/* FINAL v24.35 — Moonshadow Memory */
+.final-shadow35 .shadow35-note{margin:14px auto;padding:12px 15px;max-width:760px;border-left:3px solid #facc15;background:rgba(250,204,21,.06);font-size:.95rem}.shadow35-board{margin-top:14px;padding:12px;border:1px solid rgba(125,211,252,.28);border-radius:14px;background:radial-gradient(circle at 50% 20%,rgba(44,65,86,.68),rgba(3,10,24,.97) 68%);overflow:hidden}.shadow35-head{display:flex;justify-content:space-between;color:#7dd3fc;font-size:.72rem;letter-spacing:.09em;margin-bottom:4px}.shadow35-board svg{width:100%;height:auto;display:block;touch-action:manipulation}.terrain35 circle{fill:none;stroke:rgba(148,163,184,.07);stroke-width:12}.source35 circle{fill:url(#moonGlow35);stroke:#fff8c5;stroke-width:2;filter:url(#glow35)}.source35 text{text-anchor:middle;font-size:8px;font-weight:900;fill:#3f3a24;letter-spacing:.08em}.rays35 line{stroke:rgba(254,240,138,.66);stroke-width:2;filter:url(#glow35)}.rays35 .blocked35{stroke:#fef08a;stroke-width:2.5;stroke-linecap:round}.equipment35>*{fill:#172033;stroke:#64748b;stroke-width:2}.equipment35 line,.equipment35 path{fill:none;stroke:#64748b;stroke-width:3}.equipment35 .decoy-eq{opacity:.82}.memory35{cursor:pointer}.memory35 circle{fill:#0b1628;stroke:rgba(203,213,225,.62);stroke-width:2}.memory35:hover circle{stroke:#fef08a}.memory35.selected35 circle{stroke:#facc15;stroke-width:4;filter:url(#glow35)}.memory35.wrong35 circle{stroke:#fb7185;stroke-width:4}.memory35 text{text-anchor:middle;pointer-events:none}.phase35{font-size:14px}.kana35{font-size:17px;font-weight:900;fill:#fff}.memory-status35{padding:10px;border-top:1px dashed rgba(125,211,252,.24);font-family:monospace;font-size:.82rem;color:#cbd5e1}.memory-check35{display:block;width:min(330px,92%);margin:10px auto 4px;padding:10px 16px}.memory-reveal35{margin:12px auto 2px;padding:14px;max-width:620px;border:1px solid rgba(250,204,21,.35);border-radius:10px;background:rgba(250,204,21,.045);text-align:center}.memory-reveal35[hidden]{display:none!important}.memory-ok35{font-family:monospace;color:#86efac;font-weight:900}.memory-warn35{margin-top:4px;font-family:monospace;color:#facc15;font-weight:900}.picked35{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:13px}.picked35 span{display:grid;grid-template-columns:auto auto;gap:5px;align-items:center;padding:8px 11px;border:1px solid rgba(125,211,252,.25);border-radius:8px;background:#071120}.picked35 b{font-size:1.15rem}.final-shadow35+label{margin-top:18px}@media(max-width:650px){.shadow35-board{padding:7px}.shadow35-head{font-size:.6rem}.phase35{font-size:17px}.kana35{font-size:20px}.picked35{gap:6px}.picked35 span{padding:6px 8px}}
+</style>
+
+<style>
+/* v24.37 — second authentication using the same moonlight board */
+#final .eqcode35{opacity:0;fill:#94a3b8;font-size:8px;font-weight:700;text-anchor:middle;letter-spacing:.06em;paint-order:stroke;stroke:#07111f;stroke-width:2px;transition:opacity .35s ease}
+#final .stage2-active37 .eqcode35{opacity:0}
+#final .stage2-active37 .key-eq35{filter:drop-shadow(0 0 3px rgba(56,189,248,.18))}
+#final .pipe38{opacity:0;fill:none;stroke:#38bdf8;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:8 7;transition:opacity .4s ease;filter:url(#glow35)}
+#final .pipe-label38{opacity:0;fill:#7dd3fc;font-size:10px;font-weight:900;letter-spacing:.08em;text-anchor:middle;transition:opacity .4s ease}
+#final .stage2-active37 .pipe38,#final .stage2-active37 .pipe-label38{opacity:0}
+#final .final-stage237{margin:14px auto 4px;max-width:760px;padding:14px 16px;border:1px solid rgba(250,204,21,.48);border-radius:12px;background:rgba(35,27,5,.78);box-shadow:0 0 22px rgba(250,204,21,.08)}
+#final .stage2-alert37{color:#fde68a;font-weight:900;letter-spacing:.08em}
+#final .stage2-main37{margin-top:6px;color:#fca5a5;font-weight:900;font-size:1.05rem}
+#final .stage2-note37{margin-top:8px;line-height:1.65;color:#e5e7eb}
+#final .return39{margin-top:16px;padding:15px 12px;border-top:1px dashed rgba(125,211,252,.28)}
+#final .return39-title{font-family:monospace;color:#7dd3fc;font-weight:900;letter-spacing:.06em;margin-bottom:12px}
+#final .return39-row{display:flex;justify-content:center;align-items:flex-end;gap:7px;flex-wrap:wrap}
+#final .return39-char{position:relative;min-width:48px;height:64px;padding:7px 8px;border:1px solid rgba(148,163,184,.5);border-radius:9px;background:#091525;color:#fff;font-size:1.45rem;font-weight:900;cursor:default;transition:transform .35s,opacity .35s,filter .35s,border-color .25s}
+#final .return39-char .return39-phase{display:block;height:19px;font-size:.85rem;line-height:1;opacity:.9}
+#final .return39-char.kaguya39{cursor:pointer;border-color:rgba(250,204,21,.58);box-shadow:0 0 10px rgba(250,204,21,.08)}
+#final .return39-char.kaguya39:hover{transform:translateY(-3px);border-color:#facc15}
+#final .return39-char.returned39{transform:translateY(-90px) scale(.65);opacity:0;filter:blur(2px);pointer-events:none}
+#final .return39-char.remain39{border-color:#facc15;box-shadow:0 0 12px rgba(250,204,21,.25);color:#fff7bf}
+#final .return39-status{margin-top:13px;font-family:monospace;color:#cbd5e1;font-size:.82rem}
+#final .return39-status.done39{color:#86efac;font-weight:900}
+@media(max-width:650px){#final .return39-row{gap:4px}#final .return39-char{min-width:38px;height:58px;padding:6px 5px;font-size:1.2rem}}
+</style>
+
+<style>
+.kage-final-check[hidden]{display:none!important}.kage-final-check{position:fixed;inset:0;z-index:100001;display:none;align-items:center;justify-content:center;background:rgba(1,4,12,.94);opacity:0;transition:opacity .22s ease;padding:20px}.kage-final-check.show{opacity:1}.kage-final-panel{width:min(620px,92vw);padding:28px 26px 26px;text-align:center;border:1px solid rgba(125,211,252,.42);border-radius:16px;background:linear-gradient(180deg,rgba(8,20,39,.98),rgba(3,9,22,.98));box-shadow:0 0 50px rgba(56,189,248,.10)}.kage-final-portrait{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(125,211,252,.18));margin-bottom:8px}.kage-final-name{font:900 .72rem monospace;letter-spacing:.16em;color:#7dd3fc}.kage-final-line{margin:14px auto 22px;max-width:500px;color:#cbd5e1;line-height:1.8}.kage-final-question{margin:0 auto 18px;padding:18px 16px;border-left:4px solid #facc15;background:rgba(250,204,21,.07);font-size:clamp(1.15rem,3vw,1.55rem);font-weight:900;color:#f8fafc}.kage-final-question span{color:#facc15;margin-right:.25em}.kage-final-input{width:min(420px,90%);text-align:center;font-size:1.1rem;font-weight:800;letter-spacing:.08em}.kage-final-btn{display:block;margin:12px auto 0;min-width:180px}.kage-final-msg{min-height:1.6em;margin-top:14px;font-weight:800}.kage-final-msg.ok{color:#86efac}.kage-final-msg.ng{color:#fca5a5}
+</style>
+<style>
+/* v24.44 — final restore screen scroll fix */
+.final-restore-overlay{
+  align-items:flex-start!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:clamp(18px,4vh,42px) 12px max(42px,env(safe-area-inset-bottom))!important;
+}
+.final-restore-overlay.show{display:flex!important}
+.final-restore-overlay .restore-panel{
+  flex:0 0 auto;
+  margin:auto!important;
+  max-height:none!important;
+}
+@media(max-height:850px){
+  .final-restore-overlay .restore-moon{width:min(125px,24vh)!important;margin:10px auto!important}
+  .final-restore-overlay .restore-security{margin:14px auto!important}
+  .final-restore-overlay .restore-main{margin-top:12px!important}
+  .final-restore-overlay .clear-report{margin-top:16px!important}
+}
+</style>
+</head>
+<body>
+
+<div id="resumeBanner" class="resume-banner"></div>
+<div id="utilityRow" class="utility-row" style="display:none">
+  <button class="utility-btn resume-btn" onclick="returnToSavedScreen()">前回の続きへ</button>
+</div>
+
+<div class="shell">
+  <div class="topbar">
+    <div class="pill">N/S/R FACTORY // HIJACKED</div>
+    <div class="pill" id="phaseLabel">PHASE 0</div>
+  </div>
+
+  <main class="card">
+    <div class="brand">GEKKO-DAN // SECURITY NETWORK</div>
+    <div class="moonstage" id="moon">🌑</div>
+    <div class="progress"><i id="bar"></i></div>
+<div id="stageStrip" class="stage-strip"><span class="stage-dot" data-stage="0"></span><span class="stage-dot" data-stage="1"></span><span class="stage-dot" data-stage="2"></span><span class="stage-dot" data-stage="3"></span><span class="stage-dot" data-stage="4"></span><span class="stage-dot" data-stage="5"></span><span class="stage-dot" data-stage="6"></span><span class="stage-dot" data-stage="7"></span><span class="stage-dot" data-stage="8"></span><span class="stage-dot" data-stage="9"></span><span class="stage-dot" data-stage="10"></span><span class="stage-dot" data-stage="11"></span></div>
+
+    <section id="start" class="screen active">
+      <h1>GEKKO-DAN SYSTEM</h1>
+      <div class="sub">月光団からの挑戦状</div>
+      <div class="dialogue character-dialogue" data-character="ナル・シー"><img class="char-portrait" src="assets/naru_c_final.png" alt="ナル・シーのシルエット"><b class="char-name">月光卿ナル・シー</b><br>「ふははは！我ら月光団のシステムへよく辿り着いたな、人間ども！工場を取り戻したければ、我らが仕掛けた謎をすべて解いてみせるがいい！」</div>
+      <label>キャンパス名</label>
+      <select id="campus">
+          <option value="">キャンパスを選択</option>
+          <option value="御茶ノ水キャンパス">御茶ノ水キャンパス</option>
+          <option value="秋葉原キャンパス">秋葉原キャンパス</option>
+          <option value="池袋キャンパス">池袋キャンパス</option>
+          <option value="渋谷キャンパス">渋谷キャンパス</option>
+          <option value="日暮里キャンパス">日暮里キャンパス</option>
+          <option value="東陽町キャンパス">東陽町キャンパス</option>
+          <option value="錦糸町駅北口キャンパス">錦糸町駅北口キャンパス</option>
+          <option value="晴海キャンパス">晴海キャンパス</option>
+        </select>
+      <label for="teamName">チーム名</label>
+      <input id="teamName" maxlength="30" placeholder="例：月見だんごチーム">
+<div id="startMsg" class="status error"></div>
+      <button onclick="begin()">工場復旧ミッションを開始</button><div class="mobile-note">SYSTEM BUILD v24.14</div>
+    </section>
+
+    <section id="c1" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>ARCHIVE DATA // HIJACKED</span></div>
+  <span class="tag">CHALLENGE 01 // FACTORY RESTORATION</span>
+  <h1>第一製造ライン</h1>
+  <div class="dialogue character-dialogue" data-character="カゲ"><img class="char-portrait" src="assets/kage_final.png" alt="カゲのシルエット"><b class="char-name">カゲ</b><br>「……来ましたか。あの人、さっきからずっと高笑いの練習してるんですよ。……早めに終わらせてもらえると、助かります。」</div>
+  <div class="challenge">
+      <b>手帳の記載を読み解き、①〜⑤に入る文字を順番に答えよ。</b>
+      <div class="ch1-image-wrap">
+        <img src="assets/challenge01_gekkodan.png" alt="CHALLENGE 01 謎の手帳の暗号" class="ch1-puzzle-image" onclick="openPuzzleImage(this.src)">
+      </div>
+    </div>
+    <label>解除コード</label><input id="a1" inputmode="numeric" placeholder="数字で入力">
+  <div id="m1" class="status"></div>
+  <button onclick="judge('a1','13','m1','c2',1)">LOCK解除</button>
+</section>
+
+    <section id="c2" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>LEGACY TERMINAL // LOCKED</span></div>
+  <span class="tag">CHALLENGE 02 // FACTORY RESTORATION</span><h1>第二製造ライン</h1>
+  <div class="dialogue character-dialogue" data-character="ヒカリ"><img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット"><b class="char-name">ヒカリ</b><br>「ふふーん！ひとつ進んだくらいで調子に乗らないことね！ナル・シー様の華麗なる計画は、まだ始まったばかりなんだから！」</div>
+  <div class="challenge">
+    <b>ナンプレを完成させ、赤枠に当てはまる数字を答えよ。</b>
+    <div class="small">タテ・ヨコ・各3×3のブロックに、1〜9をひとつずつ入れる。</div>
+    <div class="monitor-shell">
+      <div class="monitor-head"><b>GEKKO-DAN LEGACY TERMINAL</b><span>NODE 02</span></div>
+      <div class="sudoku original"><div>4</div><div>1</div><div>5</div><div class="blank"></div><div>6</div><div>9</div><div class="blank"></div><div>7</div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>3</div><div class="blank"></div><div class="blank"></div><div>1</div><div class="blank"></div><div>2</div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>4</div><div class="blank"></div><div>3</div><div>5</div><div class="blank"></div><div class="blank"></div><div>6</div><div>7</div><div>2</div><div>1</div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>4</div><div>8</div><div>3</div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>5</div><div>7</div><div>5</div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>8</div><div class="blank"></div><div>1</div><div>3</div><div>2</div><div>8</div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>7</div><div>1</div><div class="blank"></div><div>6</div><div class="blank"></div><div>9</div><div>6</div><div class="blank redtarget"></div><div class="blank"></div><div class="blank"></div><div class="blank"></div><div>4</div><div>5</div><div>1</div><div>5</div><div class="blank"></div><div>6</div><div class="blank"></div><div class="blank"></div><div>8</div><div class="blank"></div><div class="blank"></div></div>
+      <div class="monitor-prompt">赤枠に入る数字は？</div>
+    </div>
+  </div>
+  <label>解除コード</label><input id="a2" inputmode="numeric" placeholder="1桁の数字">
+  <div id="m2" class="status"></div>
+  <button onclick="judgeSudoku('a2','8','m2','c3',2,'解析方式：ナンプレ / 完成盤面を保存')">LOCK解除</button>
+</section>
+
+    <section id="c3" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>N/S/R DANGO FACTORY // ONLINE</span></div>
+  <span class="tag">CHALLENGE 03 // FACTORY RESTORATION</span><h1>第三製造ライン</h1>
+      <div class="dialogue character-dialogue" data-character="ナル・シー"><img class="char-portrait" src="assets/naru_c_final.png" alt="ナル・シーのシルエット"><b class="char-name">ナル・シー</b><br>「フハハハハ！よくぞここまで来た、諸君！もっと近くで見ても構わんぞ？月光に照らされた私の横顔をな！」</div>
+  <div class="challenge">
+      <b>隠れた部分に当てはまる文字を答えよ。</b>
+      <div class="ch3-image-wrap">
+        <img src="assets/challenge03_puzzle_only.png"
+             alt="CHALLENGE 03 隠された文字の謎"
+             class="ch3-puzzle-image"
+             onclick="openPuzzleImage(this.src)">
+      </div>
+    </div>
+    <div class="hint ch3-hint">
+      💡 ヒント：五十音順表を使うとわかりやすいかも
+    </div>
+    <label>解除コード</label><input id="a3" placeholder="ひらがなで入力">
+  <div id="m3" class="status"></div>
+  <button onclick="judge('a3','にきろ','m3','c4',3,'解析方式：五十音変換 2↑')">LOCK解除</button>
+</section>
+
+    <section id="c4" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>N/S/R DANGO FACTORY // ONLINE</span></div>
+  <span class="tag">CHALLENGE 04 // FACTORY RESTORATION</span><h1>第四製造ライン</h1>
+  <div class="dialogue character-dialogue" data-character="カゲ"><img class="char-portrait" src="assets/kage_final.png" alt="カゲのシルエット"><b class="char-name">カゲ</b><br>「……まだ続けるんですね。まあ、僕は止めませんけど。困るのはたぶん、僕じゃなくてあの人なので。」</div>
+  <div class="challenge">
+      <b>「打野」が表す数字を答えよ。</b>
+      <div class="ch4-image-wrap">
+        <img src="assets/challenge04_gekkodan.png"
+             alt="CHALLENGE 04 満月に記された漢字と数字の謎"
+             class="ch4-puzzle-image"
+             onclick="openPuzzleImage(this.src)">
+      </div>
+    </div>
+    <label>解除コード</label><input id="a4" inputmode="numeric" placeholder="数字で入力">
+  <div id="m4" class="status"></div>
+  <button onclick="judge('a4','1196','m4','c5',4,'解析情報：月が満ちる順')">LOCK解除</button>
+</section>
+
+    <section id="c5" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>N/S/R DANGO FACTORY // ONLINE</span></div>
+  <span class="tag">CHALLENGE 05 // FACTORY RESTORATION</span><h1>第五製造ライン</h1>
+  <div class="dialogue character-dialogue" data-character="ヒカリ"><img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット"><b class="char-name">ヒカリ</b><br>「ちょ、ちょっと！思ったより進んでるじゃない！……でもナル・シー様なら当然ここまで計算済みよ！たぶん！」</div>
+  
+  <div class="challenge ch5-exact">
+    <b>十五夜が導く。満月から辿れ。</b>
+    <div class="ch5-grid-exact"><div class="ch5-card">
+      <span class="ch5-moon bl" aria-hidden="true">🌕</span>
+      <div class="ch5-board"><div class="ch5-row" data-dir="←"><span class="ch5-cell">ね</span><span class="ch5-cell">ふ</span><span class="ch5-cell">せ</span><span class="ch5-cell">せ</span><span class="ch5-cell">れ</span><span class="row-dir">←</span></div><div class="ch5-row" data-dir="→"><span class="ch5-cell">の</span><span class="ch5-cell">い</span><span class="ch5-cell">か</span><span class="ch5-cell">め</span><span class="ch5-cell">ご</span><span class="row-dir">→</span></div><div class="ch5-row" data-dir="←"><span class="ch5-cell">こ</span><span class="ch5-cell">せ</span><span class="ch5-cell">け</span><span class="ch5-cell">ぬ</span><span class="ch5-cell">し</span><span class="row-dir">←</span></div><div class="ch5-row" data-dir="→"><span class="ch5-cell">よ</span><span class="ch5-cell">ろ</span><span class="ch5-cell">や</span><span class="ch5-cell">え</span><span class="ch5-cell">え</span><span class="row-dir">→</span></div></div>
+    </div>
+<div class="ch5-card">
+      <span class="ch5-moon tl" aria-hidden="true">🌕</span>
+      <div class="ch5-board"><div class="ch5-row" data-dir="→"><span class="ch5-cell">あ</span><span class="ch5-cell">ま</span><span class="ch5-cell">く</span><span class="ch5-cell">は</span><span class="ch5-cell">こ</span><span class="row-dir">→</span></div><div class="ch5-row" data-dir="←"><span class="ch5-cell">も</span><span class="ch5-cell">く</span><span class="ch5-cell">け</span><span class="ch5-cell">う</span><span class="ch5-cell">わ</span><span class="row-dir">←</span></div><div class="ch5-row" data-dir="→"><span class="ch5-cell">そ</span><span class="ch5-cell">ん</span><span class="ch5-cell">け</span><span class="ch5-cell">こ</span><span class="ch5-cell">も</span><span class="row-dir">→</span></div><div class="ch5-row" data-dir="←"><span class="ch5-cell">も</span><span class="ch5-cell">そ</span><span class="ch5-cell">け</span><span class="ch5-cell">え</span><span class="ch5-cell">ろ</span><span class="row-dir">←</span></div></div>
+    </div>
+<div class="ch5-card">
+      <span class="ch5-moon br" aria-hidden="true">🌕</span>
+      <div class="ch5-board"><div class="ch5-row" data-dir="→"><span class="ch5-cell">な</span><span class="ch5-cell">せ</span><span class="ch5-cell">き</span><span class="ch5-cell">と</span><span class="ch5-cell">し</span><span class="row-dir">→</span></div><div class="ch5-row" data-dir="←"><span class="ch5-cell">め</span><span class="ch5-cell">れ</span><span class="ch5-cell">ま</span><span class="ch5-cell">は</span><span class="ch5-cell">ゆ</span><span class="row-dir">←</span></div><div class="ch5-row" data-dir="→"><span class="ch5-cell">う</span><span class="ch5-cell">ち</span><span class="ch5-cell">に</span><span class="ch5-cell">て</span><span class="ch5-cell">に</span><span class="row-dir">→</span></div><div class="ch5-row" data-dir="←"><span class="ch5-cell">ま</span><span class="ch5-cell">そ</span><span class="ch5-cell">れ</span><span class="ch5-cell">に</span><span class="ch5-cell">す</span><span class="row-dir">←</span></div></div>
+    </div>
+<div class="ch5-card">
+      <span class="ch5-moon tr" aria-hidden="true">🌕</span>
+      <div class="ch5-board"><div class="ch5-row" data-dir="←"><span class="ch5-cell">よ</span><span class="ch5-cell">せ</span><span class="ch5-cell">ひ</span><span class="ch5-cell">め</span><span class="ch5-cell">へ</span><span class="row-dir">←</span></div><div class="ch5-row" data-dir="→"><span class="ch5-cell">か</span><span class="ch5-cell">く</span><span class="ch5-cell">い</span><span class="ch5-cell">は</span><span class="ch5-cell">に</span><span class="row-dir">→</span></div><div class="ch5-row" data-dir="←"><span class="ch5-cell">ち</span><span class="ch5-cell">は</span><span class="ch5-cell">に</span><span class="ch5-cell">せ</span><span class="ch5-cell">す</span><span class="row-dir">←</span></div><div class="ch5-row" data-dir="→"><span class="ch5-cell">ら</span><span class="ch5-cell">た</span><span class="ch5-cell">せ</span><span class="ch5-cell">せ</span><span class="ch5-cell">ひ</span><span class="row-dir">→</span></div></div>
+    </div></div>
+    <div class="small">4つの文字を並べ替えて、コードを導け。</div>
+  </div>
+<label>CODE</label><input id="a5" placeholder="ひらがなで入力">
+  <div id="m5" class="status"></div>
+  <button onclick="judge('a5','もちごめ','m5','c6',5,'使用キー：15 / 原材料：もちごめ')">LOCK解除</button>
+</section>
+
+    <section id="c6" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>N/S/R DANGO FACTORY // ONLINE</span></div>
+  <span class="tag">CHALLENGE 06 // FACTORY RESTORATION</span><h1>第六製造ライン</h1>
+  <div class="dialogue character-dialogue" data-character="ナル・シー">
+    <img class="char-portrait" src="assets/naru_c_final.png" alt="ナル・シーのシルエット">
+    <b class="char-name">ナル・シー</b><br>
+    「フッ……なかなかやるではないか。だが勘違いするな！これは私が諸君を輝かせるため、あえて用意した舞台なのだ！」
+  </div>
+
+  <div class="challenge ch06-puzzle">
+    <b>写真に宿る名が、文を解く鍵となる。</b>
+    <div class="ch06-image-wrap">
+      
+      <img src="assets/ch06_puzzle.png"
+           alt="竹刀、マスカット、鳥籠と、出題文「鹿児島 サンマ魔獣 資産すご」が描かれたCH06問題画像"
+           class="ch06-puzzle-image"
+           onclick="openPuzzleImage(this.src)">
+    </div>
+    <div class="small">※画像をタップすると拡大表示されます</div>
+  </div>
+
+  <label>CODE</label>
+  <input id="a6" inputmode="numeric" autocomplete="off" placeholder="CODEを入力">
+  <div id="m6" class="status"></div>
+  <button onclick="judge('a6','33','m6','central',6)">LOCK解除</button>
+</section>
+
+    <section id="central" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>CENTRAL CONTROL // ARCHIVE SCAN</span></div>
+  <span class="tag">CENTRAL CONTROL ROOM</span>
+  <h1>中央制御室</h1>
+
+  <div class="dialogue character-dialogue" data-character="ナル・シー">
+    <img class="char-portrait" src="assets/naru_c_final.png" alt="ナル・シーのシルエット">
+    <b class="char-name">ナル・シー</b><br>
+    「六つの製造ラインは復旧したようだな。だが、ここから先へ進むには記録の照合が必要だ。」
+  </div>
+
+  <div class="challenge central-auth">
+    <div class="central-prompt central-symbol-prompt">
+      <span class="central-kicker">NUMERIC ARCHIVE DETECTED</span>
+      <b class="central-symbol">＞</b>
+    </div>
+
+    
+    <div class="central-archive-panel">
+      <button type="button" class="archive-toggle" onclick="toggleCentralArchive()" aria-expanded="false">
+        解除ログを確認
+      </button>
+      <div id="centralArchiveLog" class="archive-log" hidden>
+        <div class="archive-log-head">
+          <span>FACTORY RESTORATION LOG</span>
+          <small>CH01 — CH06 // CLEARED CODE ARCHIVE</small>
+        </div>
+        <div class="archive-code-grid">
+          <div><span>CH01</span><b>13</b></div>
+          <div><span>CH02</span><b>8</b></div>
+          <div><span>CH03</span><b>にきろ</b></div>
+          <div><span>CH04</span><b>1196</b></div>
+          <div><span>CH05</span><b>もちごめ</b></div>
+          <div><span>CH06</span><b>33</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="central-grid" id="centralGrid">
+      <button type="button" class="central-log" data-ch="1"><span>CH01</span><small>LOG 01</small></button>
+      <button type="button" class="central-log" data-ch="2"><span>CH02</span><small>LOG 02</small></button>
+      <button type="button" class="central-log" data-ch="3"><span>CH03</span><small>LOG 03</small></button>
+      <button type="button" class="central-log" data-ch="4"><span>CH04</span><small>LOG 04</small></button>
+      <button type="button" class="central-log" data-ch="5"><span>CH05</span><small>LOG 05</small></button>
+      <button type="button" class="central-log" data-ch="6"><span>CH06</span><small>LOG 06</small></button>
+    </div>
+
+    <div id="mCentral" class="status"></div>
+    <button type="button" class="central-submit" onclick="checkCentralArchive()">記録を照合</button>
+  </div>
+</section>
+<section id="phase2" class="screen" hidden><div class="factory-header"><b>月光団 SYSTEM</b><span>N/S/R DANGO FACTORY // ONLINE</span></div>
+      <span class="tag">PHASE 2</span>
+    <div class="puzzle-visual"><div class="puzzle-visual-title">GEKKO-DAN SECURITY GATES</div>
+    <div class="security-grid">
+      <div class="security-cell">GATE A<br>LOCKED</div><div class="security-cell">GATE B<br>LOCKED</div>
+      <div class="security-cell">GATE C<br>LOCKED</div><div class="security-cell">GATE D<br>LOCKED</div>
+    </div></div><h1>GEKKO-DAN SECURITY</h1>
+      <div class="notice">⚠ SECURITY LEVEL：MAX<br>4つの不正セキュリティを解除してください。</div>
+      <div class="dialogue character-dialogue" data-character="ヒカリ"><img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット"><b class="char-name">ヒカリ</b><br>「ま、まだ終わってないんだから！ここからがナル・シー様の本領発揮よ！アナタ達なんか、まとめて返り討ちなんだから！」</div>
+      <button onclick="show('secA')">SECURITY Aへ</button>
+    </section>
+    <section id="sb" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>SECURITY LAYER // MOONLIGHT PASSWORD</span></div>
+  <span class="tag">SECURITY B // MOONLIGHT PASSWORD</span>
+  <h1>月光パスワード</h1>
+
+  <div class="challenge security-b-v1">
+    <div class="secB-instruction">B：月は満ち、そして欠ける。</div>
+
+    <div class="secB-board">
+      <div class="secB-moon">●</div>
+      <div class="secB-watermark">MOONLIGHT<br><span>TRACE SYSTEM</span></div>
+
+      <div class="moon-phase phase-new phase-at-1"><i><em></em></i></div>
+      <div class="moon-phase phase-crescent phase-at-2"><i><em></em></i></div>
+      <div class="moon-phase phase-half phase-at-4"><i><em></em></i></div>
+      <div class="moon-phase phase-gibbous phase-at-3"><i><em></em></i></div>
+
+      <div class="window win-a"><b>1</b><small>WINDOW</small></div>
+      <div class="window win-b"><b>2</b><small>WINDOW</small></div>
+      <div class="window win-c"><b>4</b><small>WINDOW</small></div>
+      <div class="window win-d"><b>3</b><small>WINDOW</small></div>
+
+      <span class="beam beam-a"></span>
+      <span class="beam beam-b"></span>
+      <span class="beam beam-c"></span>
+      <span class="beam beam-d"></span>
+    </div>
+  </div>
+
+  <label>CODE</label>
+  <input id="aSecB" autocomplete="off" inputmode="numeric" placeholder="CODEを入力">
+  <div id="mSecB" class="status"></div>
+  <button onclick="judge('aSecB','3421','mSecB','sc','B')">SECURITY B 解除</button>
+</section>
+
+    <section id="sc" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>SECURITY LAYER // CIPHER DEVICE</span></div>
+  <span class="tag">SECURITY C // LUNAR CIPHER</span>
+  <h1>月輪暗号装置</h1>
+
+  <div class="challenge security-c-v1">
+    <div class="secC-instruction">C：傷ついた分だけ恐れず進め。</div>
+
+    <div class="cipher-console">
+      <div class="cipher-readout">
+        <small>WORD RING // START</small>
+        <strong>MOON</strong>
+      </div>
+
+      <div class="cipher-wrap">
+        <div class="cipher-marker">▼</div>
+        <div id="cipherOuter" class="cipher-ring outer-ring"></div>
+        <div id="cipherInner" class="cipher-ring inner-ring"></div>
+        <div class="cipher-core crater-core" aria-label="クレーターのある月">
+          <div class="crater-moon">
+            <i class="crater target c1"></i>
+            <i class="crater target c2"></i>
+            <i class="crater target c3"></i>
+            <i class="crater target c4"></i>
+            <i class="crater target c5"></i>
+          </div>
+          <small>LUNAR<br>SHIFT</small>
+        </div>
+      </div>
+
+      <div class="cipher-controls">
+        <button type="button" onclick="rotateCipher(-1)">◀</button>
+        <div><small>SHIFT</small><b id="cipherShift">00</b></div>
+        <button type="button" onclick="rotateCipher(1)">▶</button>
+      </div>
+
+      <div class="cipher-output">
+        <small>SELECTED WORD</small>
+        <b id="cipherOutput">MOON</b>
+      </div>
+    </div>
+  </div>
+
+  <label>CODE</label>
+  <input id="aSecC" autocomplete="off" placeholder="CODEを入力">
+  <div id="mSecC" class="status"></div>
+  <button onclick="judge('aSecC','STAR','mSecC','sd','C')">SECURITY C 解除</button>
+</section>
+
+    <section id="sd" class="screen" hidden>
+<div class="factory-header"><b>月光団 SYSTEM</b><span>SECURITY LAYER // MEMORY ARCHIVE</span></div>
+<span class="tag">SECURITY D // MEMORY ARCHIVE</span>
+<h1>記憶照合認証</h1>
+
+<div class="challenge security-d-v6">
+  <div class="secD-instruction">D：解除された記録を照合せよ。</div>
+
+  <div class="archive-console d6-console">
+    <div class="archive-head">
+      <span>GEKKODAN // AUTHENTICATION ARCHIVE</span>
+      <b>PAST AUTHENTICATION DATA : ACCESSIBLE</b>
+    </div>
+
+    <div class="d6-status">
+      <div><small>SECURITY A</small><strong>CRATER</strong></div>
+      <div><small>SECURITY B</small><strong>3421</strong></div>
+      <div><small>SECURITY C</small><strong>STAR</strong></div>
+    </div>
+
+    <div class="archive-divider"></div>
+
+    <div class="d6-trace">
+      <small>MEMORY TRACE // RECOVERED</small>
+      <div class="crater-trace" aria-label="復元された5つの痕跡">
+        <i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+
+    <div class="d6-wordlist">
+      <div><b>01</b><span>MOON</span></div>
+      <div><b>02</b><span>DUSK</span></div>
+      <div><b>03</b><span>GLOW</span></div>
+      <div><b>04</b><span>HAZE</span></div>
+      <div><b>05</b><span>STAR</span></div>
+    </div>
+
+    <div class="d6-system-note">SYSTEM MESSAGE // 過去の認証記録は、互いに関連している。</div>
+    <div class="archive-output">
+      <small>RESTORED FRAGMENT</small>
+      <strong><span>?</span><span>?</span><span>?</span><span>?</span></strong>
+    </div>
+  </div>
+</div>
+
+<label>CODE</label>
+<input id="aSecD" autocomplete="off" placeholder="CODEを入力">
+<div id="mSecD" class="status"></div>
+<button onclick="judgeSecurityD()">SECURITY D 解除</button>
+</section>
+
+    
+<section id="secA" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>SECURITY LAYER // COLOR AUTHENTICATION</span></div>
+  <span class="tag">SECURITY A // COLOR AUTHENTICATION</span>
+  <h1>色彩認証</h1>
+
+  <div class="dialogue character-dialogue" data-character="ヒカリ">
+    <img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット">
+    <b class="char-name">ヒカリ</b><br>
+    「ここからは製造ラインとは違うわ。月光団の認証を突破できるものなら、やってみなさい！」
+  </div>
+
+  <div class="challenge security-a-v3">
+    <div class="secA-instruction">A：七色の道を辿れ。</div>
+    <div class="secA-board-v9">
+<div class="secA-watermark">GEKKODAN<br><span>SECURITY GRID</span></div>
+<span class="secA-node red" style="left:29%;top:14%"></span>
+<span class="secA-node orange" style="left:11%;top:12%"></span>
+<span class="secA-node yellow" style="left:14%;top:82%"></span>
+<span class="secA-node green" style="left:45%;top:55%"></span>
+<span class="secA-node blue" style="left:90%;top:74%"></span>
+<span class="secA-node indigo" style="left:92%;top:18%"></span>
+<span class="secA-node violet" style="left:17%;top:50%"></span>
+<span class="secA-glyph-v9" style="left:20.0%;top:13.0%">C</span>
+<span class="secA-glyph-v9" style="left:12.5%;top:47.0%">R</span>
+<span class="secA-glyph-v9" style="left:29.5%;top:68.5%">A</span>
+<span class="secA-glyph-v9" style="left:67.5%;top:64.5%">T</span>
+<span class="secA-glyph-v9" style="left:91.0%;top:46.0%">E</span>
+<span class="secA-glyph-v9" style="left:54.5%;top:34.0%">R</span>
+<span class="secA-glyph-v9" style="left:50%;top:10%">M</span>
+<span class="secA-glyph-v9" style="left:68%;top:10%">O</span>
+<span class="secA-glyph-v9" style="left:82%;top:8%">N</span>
+<span class="secA-glyph-v9" style="left:6%;top:28%">L</span>
+<span class="secA-glyph-v9" style="left:7%;top:66%">X</span>
+<span class="secA-glyph-v9" style="left:53%;top:84%">P</span>
+<span class="secA-glyph-v9" style="left:72%;top:90%">G</span>
+<span class="secA-glyph-v9" style="left:96%;top:92%">B</span>
+<span class="secA-glyph-v9" style="left:37%;top:30%">H</span>
+<span class="secA-glyph-v9" style="left:37%;top:88%">K</span>
+<span class="secA-glyph-v9" style="left:75%;top:52%">Y</span>
+<span class="secA-glyph-v9" style="left:25%;top:94%">V</span>
+<span class="secA-glyph-v9" style="left:57%;top:44%">Q</span>
+<span class="secA-glyph-v9" style="left:80%;top:36%">J</span>
+<span class="secA-glyph-v9" style="left:5%;top:94%">W</span>
+<span class="secA-glyph-v9" style="left:98%;top:8%">Z</span>
+</div>
+  </div>
+
+  <label>CODE</label>
+  <input id="aSecA" autocomplete="off" placeholder="CODEを入力">
+  <div id="mSecA" class="status"></div>
+  <button onclick="judge('aSecA','CRATER','mSecA','sb','A')">SECURITY A 解除</button>
+</section>
+
+<section id="final" class="screen" hidden>
+<div class="factory-header"><b>月光団 SYSTEM</b><span>FINAL LAYER // MOONSHADOW MEMORY</span></div>
+<span class="tag">FINAL // 最終認証</span><h1>最終認証</h1>
+<div class="challenge final-shadow35">
+  <div class="final-kicker">FINAL：月影記録</div>
+  <div class="final-sub"><b>月光団によって最終認証記録が破損しました。</b></div>
+  <div class="shadow35-note">SYSTEM // <b>月光の届かない5つの記憶を復元せよ。</b></div>
+  <div class="shadow35-board">
+    <div class="shadow35-head"><span>MOONLIGHT MEMORY ARRAY</span><b>15 SIGNALS // 5 LOST</b></div>
+    <svg viewBox="0 0 900 610" role="img" aria-label="満月から15個の記憶へ月光が伸びる月面記録盤">
+      <defs>
+        <radialGradient id="moonGlow35"><stop offset="0" stop-color="#fffbd1"/><stop offset=".72" stop-color="#fde68a"/><stop offset="1" stop-color="#d4a72c"/></radialGradient>
+        <filter id="glow35"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <g class="terrain35"><circle cx="120" cy="330" r="70"/><circle cx="760" cy="350" r="95"/><circle cx="470" cy="500" r="60"/></g>
+      <g class="source35"><circle cx="450" cy="72" r="47"/><text x="450" y="77">FULL MOON</text></g>
+      <!-- 15 moonlight rays. Five stop at factory equipment. -->
+      <g class="rays35">
+        <line x1="432.5" y1="118" x2="45" y2="508"/>
+        <line class="blocked35" x1="435.0" y1="118" x2="229.2" y2="376.5"/>
+        <line x1="437.5" y1="118" x2="161" y2="508"/>
+        <line x1="440.0" y1="118" x2="219" y2="508"/>
+        <line class="blocked35" x1="442.5" y1="118" x2="351.5" y2="347.4"/>
+        <line x1="445.0" y1="118" x2="335" y2="508"/>
+        <line class="blocked35" x1="447.5" y1="118" x2="420.2" y2="326.5"/>
+        <line x1="450.0" y1="118" x2="451" y2="508"/>
+        <line class="blocked35" x1="452.5" y1="118" x2="483.6" y2="347.4"/>
+        <line x1="455.0" y1="118" x2="567" y2="508"/>
+        <line x1="457.5" y1="118" x2="625" y2="508"/>
+        <line x1="460.0" y1="118" x2="683" y2="508"/>
+        <line class="blocked35" x1="462.5" y1="118" x2="635.2" y2="376.5"/>
+        <line x1="465.0" y1="118" x2="799" y2="508"/>
+        <line x1="467.5" y1="118" x2="857" y2="508"/>
+      </g>
+      <!-- Secondary maintenance line: revealed only after KAGUYA-HIME authentication. -->
+      <g class="maintenance38">
+        <path class="pipe38" d="M185 408 L229.2 376.5 L290 405 L351.5 347.4 L390 392 L420.2 326.5 L455 402 L483.6 347.4 L555 410 L635.2 376.5 L700 414"/>
+        <text class="pipe-label38" x="185" y="428">LINE IN</text>
+        <text class="pipe-label38" x="700" y="434">LINE OUT</text>
+      </g>
+      <!-- Factory equipment: obstacles are present around many rays, but only five actually cut a ray. -->
+      <g class="equipment35">
+        <g class="key-eq35" data-key="ひ" transform="translate(229.2 376.5)"><rect x="-31" y="-12" width="62" height="24" rx="4"/><path d="M-18,-12 v-22 h12 v22 M8,-12 v-30 h12 v30"/><text class="eqcode35" x="0" y="28">LN-O-17</text></g>
+        <g class="key-eq35" data-key="ぐ" transform="translate(351.5 347.4)"><circle r="24"/><circle r="9"/><path d="M-33,0h66M0,-33v66"/><text class="eqcode35" x="0" y="40">MX-DA-04</text></g>
+        <g class="key-eq35" data-key="め" transform="translate(420.2 326.5)"><rect x="-34" y="-28" width="68" height="56" rx="14"/><path d="M-23,-28v-22h46v22"/><text class="eqcode35" x="0" y="43">CV-N-21</text></g>
+        <g class="key-eq35 extra-eq39" transform="translate(455 402)"><rect x="-20" y="-13" width="40" height="26" rx="5"/><text class="eqcode35" x="0" y="29">PK-GO-08</text></g>
+        <g class="key-eq35" data-key="か" transform="translate(483.6 347.4)"><path d="M-38,18 L0,-28 L38,18 Z"/><line x1="0" y1="-28" x2="0" y2="-55"/><text class="eqcode35" x="0" y="36">TR-KA-12</text></g>
+        <g class="key-eq35 extra-eq39" transform="translate(555 410)"><circle r="17"/><path d="M-24,0h48"/><text class="eqcode35" x="0" y="30">AX-E-03</text></g>
+        <g class="key-eq35" data-key="や" transform="translate(635.2 376.5)"><rect x="-35" y="-9" width="70" height="18" rx="8"/><circle cx="-20" cy="0" r="5"/><circle cx="20" cy="0" r="5"/><text class="eqcode35" x="0" y="29">GT-SE-19</text></g>
+        <g class="decoy-eq" transform="translate(120 405)"><path d="M-18,15h36v-30h-36z M-28,-15h56"/></g>
+        <g class="decoy-eq" transform="translate(275 430)"><circle r="17"/><path d="M-26,0h52M0,-26v52"/></g>
+        <g class="decoy-eq" transform="translate(630 410)"><rect x="-20" y="-22" width="40" height="44" rx="6"/></g>
+        <g class="decoy-eq" transform="translate(820 405)"><path d="M-25,18L0,-22L25,18Z"/></g>
+      </g>
+      <g class="memories35">
+        <g class="memory35" data-id="01" onclick="selectMemory35(this)" transform="translate(45 535)"><circle r="26"/><text class="phase35" y="-4">🌒</text><text class="kana35" y="18">つ</text></g>
+        <g class="memory35 target35" data-id="02" onclick="selectMemory35(this)" transform="translate(103 535)"><circle r="26"/><text class="phase35" y="-4">🌔</text><text class="kana35" y="18">ひ</text></g>
+        <g class="memory35" data-id="03" onclick="selectMemory35(this)" transform="translate(161 535)"><circle r="26"/><text class="phase35" y="-4">🌑</text><text class="kana35" y="18">な</text></g>
+        <g class="memory35" data-id="04" onclick="selectMemory35(this)" transform="translate(219 535)"><circle r="26"/><text class="phase35" y="-4">🌕</text><text class="kana35" y="18">る</text></g>
+        <g class="memory35 target35" data-id="05" onclick="selectMemory35(this)" transform="translate(277 535)"><circle r="26"/><text class="phase35" y="-4">🌒</text><text class="kana35" y="18">ぐ</text></g>
+        <g class="memory35" data-id="06" onclick="selectMemory35(this)" transform="translate(335 535)"><circle r="26"/><text class="phase35" y="-4">🌓</text><text class="kana35" y="18">し</text></g>
+        <g class="memory35 target35" data-id="07" onclick="selectMemory35(this)" transform="translate(393 535)"><circle r="26"/><text class="phase35" y="-4">🌕</text><text class="kana35" y="18">め</text></g>
+        <g class="memory35" data-id="08" onclick="selectMemory35(this)" transform="translate(451 535)"><circle r="26"/><text class="phase35" y="-4">🌔</text><text class="kana35" y="18">い</text></g>
+        <g class="memory35 target35" data-id="09" onclick="selectMemory35(this)" transform="translate(509 535)"><circle r="26"/><text class="phase35" y="-4">🌑</text><text class="kana35" y="18">か</text></g>
+        <g class="memory35" data-id="10" onclick="selectMemory35(this)" transform="translate(567 535)"><circle r="26"/><text class="phase35" y="-4">🌓</text><text class="kana35" y="18">き</text></g>
+        <g class="memory35" data-id="11" onclick="selectMemory35(this)" transform="translate(625 535)"><circle r="26"/><text class="phase35" y="-4">🌒</text><text class="kana35" y="18">み</text></g>
+        <g class="memory35" data-id="12" onclick="selectMemory35(this)" transform="translate(683 535)"><circle r="26"/><text class="phase35" y="-4">🌔</text><text class="kana35" y="18">だ</text></g>
+        <g class="memory35 target35" data-id="13" onclick="selectMemory35(this)" transform="translate(741 535)"><circle r="26"/><text class="phase35" y="-4">🌓</text><text class="kana35" y="18">や</text></g>
+        <g class="memory35" data-id="14" onclick="selectMemory35(this)" transform="translate(799 535)"><circle r="26"/><text class="phase35" y="-4">🌕</text><text class="kana35" y="18">ん</text></g>
+        <g class="memory35" data-id="15" onclick="selectMemory35(this)" transform="translate(857 535)"><circle r="26"/><text class="phase35" y="-4">🌑</text><text class="kana35" y="18">ご</text></g>
+      </g>
+    </svg>
+    <div id="memoryStatus35" class="memory-status35">MEMORY // 月光の届かない記憶を5つ選択せよ　　選択：0 / 5</div>
+    <button type="button" class="memory-check35" onclick="checkMemories35()">MEMORY ANALYSIS</button>
+    <div id="memoryReveal35" class="memory-reveal35" hidden>
+      <div class="memory-ok35">5 / 5 MEMORY RESTORED</div>
+      <div class="memory-warn35">WARNING // 認証順序不一致</div>
+      <div class="picked35"><span>🌔<b>ひ</b></span><span>🌒<b>ぐ</b></span><span>🌕<b>め</b></span><span>🌑<b>か</b></span><span>🌓<b>や</b></span></div>
+    </div>
+    <div id="finalStage237" class="final-stage237" hidden>
+      <div class="stage2-alert37">KEYWORD ACCEPTED // KAGUYA-HIME</div>
+      <div class="stage2-main37">FINAL AUTHENTICATION // INCOMPLETE</div>
+      <div class="stage2-note37">SYSTEM // <b>「かぐやひめ」を月へ返し、残された記録を読め。</b></div>
+      <div class="return39">
+        <div class="return39-title">LUNAR RETURN ARRAY // 12 RECORDS</div>
+        <div id="return39Row" class="return39-row">
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>お</button>
+          <button type="button" class="return39-char kaguya39" data-kaguya="か" onclick="returnKaguya39(this)"><span class="return39-phase">🌑</span>か</button>
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>だ</button>
+          <button type="button" class="return39-char kaguya39" data-kaguya="ぐ" onclick="returnKaguya39(this)"><span class="return39-phase">🌒</span>ぐ</button>
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>ん</button>
+          <button type="button" class="return39-char kaguya39" data-kaguya="や" onclick="returnKaguya39(this)"><span class="return39-phase">🌓</span>や</button>
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>ご</button>
+          <button type="button" class="return39-char kaguya39" data-kaguya="ひ" onclick="returnKaguya39(this)"><span class="return39-phase">🌔</span>ひ</button>
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>か</button>
+          <button type="button" class="return39-char kaguya39" data-kaguya="め" onclick="returnKaguya39(this)"><span class="return39-phase">🌕</span>め</button>
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>え</button>
+          <button type="button" class="return39-char" data-remain="1"><span class="return39-phase"></span>せ</button>
+        </div>
+        <div id="return39Status" class="return39-status">RETURN // 姫を月へ返してください　0 / 5</div>
+      </div>
+    </div>
+  </div>
+</div>
+<label id="finalInputLabel37">KEYWORD</label><input id="aFinal" autocomplete="off" placeholder="復元した言葉を入力" disabled><div id="mFinal" class="status"></div><button id="finalAuthBtn" onclick="judgeFinal37()" disabled>AUTHENTICATION</button>
+</section>
+    <section id="clear" class="screen clear" hidden>
+      <div class="huge">🌕</div>
+      <h1>FULL MOON</h1>
+      <h2>SYSTEM RESTORED</h2>
+      <div class="sub">N/S/R お月見お団子工場　完全復旧</div>
+      <div class="dialogue" style="text-align:left"><b>ナル・シー</b><br>「な……なぜだ……！我が華麗に奪ったお団子が……返されていくぅぅぅ！！」<br><br><b>カゲ</b><br>「……お団子も最初からナル・シー様のものじゃないですけどね。」<br><br><b>ヒカリ</b><br>「ナル・シー様ぁぁぁぁ！！」</div>
+      <p id="result"></p>
+      <div class="notice">工場との通信が復旧しました。</div>
+      <button class="alt" onclick="resetGame()">試作を最初から見る</button>
+    </section>
+
+    <div class="footer">PROTOTYPE v24.46 // FINAL MOONSHADOW MEMORY // LUNAR RETURN<br><span class="mobile-note">実機テスト時：途中で再読み込みしても進行を保存します</span></div>
+  </main>
+</div>
+
+<script>
+const sequence=['start','c1','c2','c3','c4','c5','c6','central','phase2','secA','sb','sc','sd','final','clear'];
+const moons=['🌑','🌑','🌒','🌒','🌓','🌓','🌔','🌔','🌔','🌔','🌔','🌔','🌔','🌔','🌕'];
+let clears=JSON.parse(sessionStorage.getItem('clears')||'[]');
+
+function show(id){
+  saveCurrentScreen(id);
+  updateStageStrip(id);
+  document.querySelectorAll('section.screen').forEach(x=>{
+    x.hidden=true;
+    x.classList.remove('active');
+  });
+  const target=document.getElementById(id);
+  if(!target){ console.error('Screen not found:',id); return; }
+  target.hidden=false;
+  target.classList.add('active');
+  const idx=sequence.indexOf(id);
+  const bar=document.getElementById('bar');
+  const moon=document.getElementById('moon');
+  const phase=document.getElementById('phaseLabel');
+  if(bar) bar.style.width=Math.max(0,idx/(sequence.length-1)*100)+'%';
+  if(moon) moon.textContent=moons[idx]||'🌑';
+  if(phase) phase.textContent=idx<8?'PHASE 1':idx<13?'PHASE 2':id==='clear'?'RESTORED':'FINAL';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function begin(){
+ const campusEl=document.getElementById('campus');
+ const teamEl=document.getElementById('teamName');
+ const c=(campusEl?.value||'').trim();
+ const t=(teamEl?.value||'').trim();
+ const msg=document.getElementById('startMsg');
+ if(!c||!t){
+   if(msg) msg.textContent='キャンパス名とチーム名を入力してください。';
+   return;
+ }
+ try{
+   sessionStorage.setItem('campus',c);
+   sessionStorage.setItem('team',t);
+   localStorage.setItem('gekkodan_campus',c);
+   localStorage.setItem('gekkodan_team',t);
+ }catch(e){}
+ if(msg) msg.textContent='';
+ show('c1');
+}
+function normalize(s){return (s||'').trim().replace(/\s+/g,'').toLowerCase()}
+function judge(inputId,correct,msgId,next,step,note=''){
+ const v=normalize(document.getElementById(inputId).value), c=normalize(correct), m=document.getElementById(msgId);
+ if(v===c){
+   animateAnswerFeedback(inputId,true);m.className='status ok';m.textContent='ACCESS GRANTED — LOCK RELEASED';
+   if(!clears.find(x=>x.step===step)){clears.push({step,answer:correct,note});sessionStorage.setItem('clears',JSON.stringify(clears))}
+   setTimeout(()=>show(next),500)
+ }else{
+   const lines=[
+     'ナル・シー「ふははは！違うぞ、人間ども！」',
+     'カゲ「……それ、本当に合ってます？」',
+     'ヒカリ「ナル・シー様の勝利です！」'
+   ];
+   m.className='status error';m.textContent=lines[Math.floor(Math.random()*lines.length)];
+ }
+}
+function toggleLog(){
+ const el=document.getElementById('log');
+ if(!el) return;
+ if(el.style.display==='none'){
+   const labels={1:'CHALLENGE 01',2:'CHALLENGE 02',3:'CHALLENGE 03',4:'CHALLENGE 04',5:'CHALLENGE 05',6:'CHALLENGE 06',7:'中央制御室',8:'SECURITY A',9:'SECURITY B',10:'SECURITY C',11:'SECURITY D'};
+   el.innerHTML=clears.map(x=>`<div class="logitem"><b>${labels[x.step]||x.step}</b>　解除コード：${x.answer}${x.note?`<br><span style="color:#f0d27a">${x.note}</span>`:''}</div>`).join('');
+   el.style.display='block';
+ }else el.style.display='none';
+}
+function resetGame(){sessionStorage.clear();clears=[];location.reload()}
+
+
+
+const restorationMessages = {
+  c2:["第一製造ライン 再起動","製造設備への電力供給を確認しました。"],
+  c3:["第二製造ライン 復旧","数値制御システムが正常化しました。"],
+  c4:["第三製造ライン 復旧","暗号化された制御データを解除しました。"],
+  c5:["第四製造ライン 復旧","競技データ認証を完了しました。"],
+  c6:["第五製造ライン 復旧","原材料供給ラインを再接続しました。"],
+  central:["第六製造ライン 復旧","出荷認証システムが正常化しました。"],
+  phase2:["中央制御室 UNLOCKED","全製造ライン復旧率：100%"],
+  sb:["SECURITY A UNLOCKED","七色の月光認証を突破しました。"],
+  sc:["SECURITY B UNLOCKED","月光配列の解析に成功しました。"],
+  sd:["SECURITY C UNLOCKED","月光暗号認証を突破しました。"],
+  final:["SECURITY D UNLOCKED","最終セキュリティへ接続します。"]
+};
+
+function restorationSequence(label, extra, nextId){
+  const mapped=restorationMessages[nextId];
+  if(mapped){label=mapped[0];extra=mapped[1];}
+  const o=document.getElementById('restoreOverlay');
+  const t=document.getElementById('restoreTitle');
+  const s=document.getElementById('restoreSub');
+  const c=document.getElementById('restoreCode');
+  const i=document.getElementById('restoreIcon');
+  if(!o){ show(nextId); return; }
+  i.textContent = (nextId==='phase2'||String(label).includes('SECURITY')) ? '🔓' : '⚙️';
+  t.textContent=label||'SYSTEM RESTORED';
+  s.textContent=extra||'システムを再起動しています……';
+  c.textContent='RESTORING...';
+  o.classList.add('show');
+  const fill=o.querySelector('.restore-fill');
+  if(fill){fill.style.animation='none';void fill.offsetWidth;fill.style.animation='fillRestore 1.15s ease forwards';}
+  setTimeout(()=>{c.textContent='RESTORED';},850);
+  setTimeout(()=>{o.classList.remove('show');show(nextId);},1550);
+}
+
+function playFinalMoon(){
+  saveTeamInfo();
+  try{
+    const clearedAt=new Date().toISOString();
+    localStorage.setItem('gekkodan_clear_time',clearedAt);
+  }catch(e){}
+  const o=document.getElementById('finalMoonSeq');
+  const p=document.getElementById('finalPhase');
+  const title=document.getElementById('finalSystemTitle');
+  const pct=document.getElementById('finalPercent');
+  const note=document.getElementById('finalEndingNote');
+  o.classList.add('show');
+  const phases=['🌑','🌒','🌓','🌔','🌕'];
+  const values=[0,25,50,75,100];
+  phases.forEach((ph,idx)=>{
+    setTimeout(()=>{
+      p.textContent=ph;
+      pct.textContent='FACTORY RESTORATION // '+values[idx]+'%';
+      if(idx===4){
+        title.textContent='N/S/R お月見お団子工場';
+        note.innerHTML='<b>FACTORY SYSTEM 100% RESTORED</b><br>全システムの復旧を確認しました。';
+      }
+    },idx*650);
+  });
+  setTimeout(()=>{
+    pct.textContent='FULL MOON // SYSTEM RESTORED';
+    const h=document.getElementById('endingHandoff'); if(h) h.classList.add('show');
+  },3300);
+}
+
+function showEndingStandby(){
+  const fm=document.getElementById('finalMoonSeq');
+  if(fm) fm.classList.remove('show');
+  show('endingStandby'); renderClearReceipt();
+}
+
+function saveTeamInfo(){
+  try{
+    const campus=document.getElementById('campus')?.value||'';
+    const team=document.getElementById('teamName')?.value.trim()||'';
+    localStorage.setItem('gekkodan_campus',campus);
+    localStorage.setItem('gekkodan_team',team);
+  }catch(e){}
+}
+function formatLocalClearTime(iso){
+  if(!iso) return '---';
+  const d=new Date(iso);
+  return d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function renderClearReceipt(){
+  const box=document.getElementById('clearReceipt');
+  if(!box) return;
+  let campus='',team='',time='';
+  try{
+    campus=localStorage.getItem('gekkodan_campus')||document.getElementById('campus')?.value||'未設定';
+    team=localStorage.getItem('gekkodan_team')||document.getElementById('teamName')?.value||'未設定';
+    time=localStorage.getItem('gekkodan_clear_time')||'';
+  }catch(e){}
+  box.innerHTML=`<div class="receipt-title">CLEAR RECEIPT</div>
+  <div class="receipt-row"><span>キャンパス</span><b>${escapeHtml(campus||'未設定')}</b></div>
+  <div class="receipt-row"><span>チーム</span><b>${escapeHtml(team||'未設定')}</b></div>
+  <div class="receipt-row"><span>クリア時刻</span><b>${formatLocalClearTime(time)}</b></div>`;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+const GEKKO_SCREEN_KEY='gekkodan_current_screen';
+const GEKKO_STARTED_KEY='gekkodan_started';
+
+function saveCurrentScreen(id){
+  try{
+    localStorage.setItem(GEKKO_SCREEN_KEY,id);
+    localStorage.setItem(GEKKO_STARTED_KEY,'1');
+  }catch(e){}
+}
+function getSavedScreen(){
+  try{return localStorage.getItem(GEKKO_SCREEN_KEY)||'';}catch(e){return '';}
+}
+function validScreenId(id){
+  return !!id && !!document.getElementById(id);
+}
+function updateResumeBanner(){
+  const b=document.getElementById('resumeBanner');
+  if(!b) return;
+  const id=getSavedScreen();
+  const u=document.getElementById('utilityRow');
+  if(validScreenId(id) && id!=='start'){
+    b.textContent='前回の進行データがあります。続きから再開できます。';
+    b.classList.add('show');
+    if(u) u.style.display='flex';
+  }else{
+    b.classList.remove('show');
+    if(u) u.style.display='none';
+  }
+}
+function returnToSavedScreen(){
+  const id=getSavedScreen();
+  if(validScreenId(id)){
+    show(id);
+    updateResumeBanner();
+  }else{
+    alert('保存された進行データはありません。');
+  }
+}
+function confirmResetProgress(){
+  if(!confirm('この端末のゲーム進行・キャンパス・チーム名・クリア時刻をリセットします。よろしいですか？')) return;
+  try{
+    ['gekkodan_current_screen','gekkodan_started','gekkodan_campus','gekkodan_team','gekkodan_clear_time'].forEach(k=>localStorage.removeItem(k));
+    sessionStorage.clear();
+  }catch(e){}
+  location.reload();
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('section.screen').forEach(x=>{
+    x.hidden=true;
+    x.classList.remove('active');
+  });
+  const start=document.getElementById('start');
+  if(start){
+    start.hidden=false;
+    start.classList.add('active');
+  }
+  updateResumeBanner();
+  const campus=localStorage.getItem('gekkodan_campus')||'';
+  const team=localStorage.getItem('gekkodan_team')||'';
+  const campusEl=document.getElementById('campus');
+  const teamEl=document.getElementById('teamName');
+  if(campusEl && campus) campusEl.value=campus;
+  if(teamEl && team) teamEl.value=team;
+});
+
+function updateStageStrip(id){
+  const dots=[...document.querySelectorAll('#stageStrip .stage-dot')];
+  if(!dots.length) return;
+  const gameStages=['c1','c2','c3','c4','c5','c6','central','secA','sb','sc','sd','final'];
+  const idx=gameStages.indexOf(id);
+  dots.forEach((d,i)=>{
+    d.classList.toggle('done',idx>i);
+    d.classList.toggle('current',idx===i);
+  });
+}
+function openPuzzleImage(src){
+  const box=document.getElementById('imageLightbox');
+  const img=document.getElementById('imageLightboxImg');
+  if(!box||!img)return;
+  img.src=src; box.classList.add('show');
+}
+function closePuzzleImage(e){
+  if(e) e.stopPropagation();
+  const box=document.getElementById('imageLightbox');
+  if(box) box.classList.remove('show');
+}
+function animateAnswerFeedback(inputId,ok){
+  const input=document.getElementById(inputId);
+  if(!input)return;
+  const host=input.closest('.screen');
+  if(!host)return;
+  host.classList.remove('is-wrong','is-correct');
+  void host.offsetWidth;
+  host.classList.add(ok?'is-correct':'is-wrong');
+  setTimeout(()=>host.classList.remove('is-wrong','is-correct'),520);
+}
+</script>
+
+
+<section id="endingStandby" class="screen" hidden>
+  <span class="tag">MISSION COMPLETE</span>
+  <h1>お月見お団子工場<br>復旧成功！</h1>
+  <div class="notice"><b>FULL MOON // SYSTEM RESTORED</b><br>全製造ライン・中央制御室・月光団セキュリティの復旧を確認しました。</div>
+  <div class="dialogue"><b>工場システム</b><br>「復旧作業へのご協力、ありがとうございました。エンディング通信を受信するまで、そのままお待ちください。」</div>
+  <div class="challenge">
+    <b>🌕 MISSION COMPLETE</b><br><br>
+    チームのみんなで工場を救うことに成功しました！<br>
+    画面を閉じず、案内人・工場職員からの案内をお待ちください。<br><span class="small">必要に応じて、下のクリア情報を工場職員へ見せてください。</span>
+  </div>
+  <div id="clearReceipt" class="clear-receipt"></div>
+</section>
+
+<div id="restoreOverlay" class="restore-overlay" aria-live="polite">
+  <div class="restore-card">
+    <div id="restoreIcon" class="restore-icon">🌕</div>
+    <div class="restore-kicker">N/S/R DANGO FACTORY SYSTEM</div>
+    <div id="restoreTitle" class="restore-title">製造ライン復旧</div>
+    <div id="restoreSub" class="restore-sub">システムを再起動しています……</div>
+    <div class="restore-bar"><div class="restore-fill"></div></div>
+    <div id="restoreCode" class="restore-code">RESTORING...</div>
+  </div>
+</div>
+
+
+<div id="finalMoonSeq" class="final-moon-seq" aria-live="polite">
+  <div class="final-moon-wrap">
+    <div id="finalPhase" class="final-phase">🌑</div>
+    <div id="finalSystemTitle" class="final-system-title">FINAL CODE ACCEPTED</div>
+    <div id="finalPercent" class="final-percent">FACTORY RESTORATION // 0%</div>
+    <div id="finalEndingNote" class="final-ending-note">中央システムを再起動しています……</div>
+    <div id="endingHandoff" class="ending-handoff">
+      <div class="ending-card">
+        <div class="restore-kicker">MISSION COMPLETE</div>
+        <h2>工場復旧成功！</h2>
+        <div>月光団によるシステム占拠を解除しました。<br>このまま画面を閉じずに、案内人からの指示を待ってください。</div>
+        <button class="ending-button" onclick="showEndingStandby()">エンディング待機画面へ</button>
+        <div class="ending-standby">※ エンディング映像・工場長・案内人の進行は、各キャンパス共通のライブ進行に合わせて実施します。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="imageLightbox" class="image-lightbox" onclick="closePuzzleImage(event)">
+  <button class="close" onclick="closePuzzleImage(event)">×</button>
+  <img id="imageLightboxImg" src="" alt="謎画像拡大表示">
+</div>
+
+
+<script>
+(function(){
+  const originalJudge = window.judge;
+  if(typeof originalJudge === 'function'){
+    window.judge = function(id, answer, n){
+      const result = originalJudge.apply(this, arguments);
+      if(n===5){
+        const v=(document.getElementById(id)?.value||'').trim();
+        if(v===answer){
+          document.getElementById('c6')?.classList.remove('locked');
+          document.querySelectorAll('[href="#c6"],[data-target="c6"]').forEach(el=>el.classList.remove('locked'));
+        }
+      }
+      return result;
+    };
+  }
+})();
+</script>
+
+
+
+
+
+<script>
+(function(){
+  const order=[];
+  const buttons=[...document.querySelectorAll('#central .central-log')];
+  const msg=document.getElementById('mCentral');
+
+  function render(){
+    buttons.forEach(btn=>{
+      const ch=Number(btn.dataset.ch);
+      const idx=order.indexOf(ch);
+      btn.classList.toggle('selected',idx!==-1);
+      let badge=btn.querySelector('.central-order');
+      if(idx!==-1){
+        if(!badge){
+          badge=document.createElement('i');
+          badge.className='central-order';
+          btn.appendChild(badge);
+        }
+        badge.textContent=String(idx+1);
+      } else if(badge){
+        badge.remove();
+      }
+    });
+  }
+
+  buttons.forEach(btn=>btn.addEventListener('click',function(){
+    const ch=Number(btn.dataset.ch);
+    const idx=order.indexOf(ch);
+    if(idx!==-1){
+      order.splice(idx,1);
+    } else {
+      order.push(ch);
+    }
+    if(msg){msg.textContent='';msg.className='status';}
+    render();
+  }));
+
+  window.checkCentralArchive=function(){
+    const correct=[4,6,1,2];
+    const ok=order.length===correct.length && order.every((v,i)=>v===correct[i]);
+    if(ok){
+      if(msg){
+        msg.textContent='認証成功 // NUMERIC ARCHIVE VERIFIED';
+        msg.className='status ok';
+      }
+      document.querySelectorAll('[href="#secA"],[data-target="secA"]').forEach(el=>el.classList.remove('locked'));
+      setTimeout(function(){
+        if(typeof show==='function') show('phase2');
+      },650);
+    } else {
+      if(msg){
+        msg.textContent='照合失敗 // CODEの種類と大小関係を再確認してください';
+        msg.className='status ng';
+      }
+      order.length=0;
+      render();
+    }
+  };
+})();
+</script>
+
+
+<script>
+function toggleCentralArchive(){
+  const log=document.getElementById('centralArchiveLog');
+  const btn=document.querySelector('#central .archive-toggle');
+  if(!log || !btn) return;
+  const opening=log.hidden;
+  log.hidden=!opening;
+  btn.setAttribute('aria-expanded',String(opening));
+  btn.textContent=opening ? '解除ログを閉じる' : '解除ログを確認';
+}
+</script>
+
+
+
+
+
+<script>
+(function(){
+  const specs=[
+    ['secA',"'aSecA'",'SECURITY A 解除'],
+    ['sb',"'aSecB'",'SECURITY B 解除']
+  ];
+  specs.forEach(([sid,needle,label])=>{
+    const sec=document.getElementById(sid);
+    if(!sec) return;
+    const btn=[...sec.querySelectorAll('button')].find(b=>(b.getAttribute('onclick')||'').includes(needle));
+    if(!btn) return;
+    const keep=()=>{ if(btn.textContent.trim()!==label) btn.textContent=label; };
+    keep();
+    new MutationObserver(keep).observe(btn,{childList:true,subtree:true,characterData:true});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const outer=document.getElementById('cipherOuter');
+  const inner=document.getElementById('cipherInner');
+  if(!outer||!inner)return;
+
+  function populate(ring,radius){
+    [...letters].forEach((ch,i)=>{
+      const el=document.createElement('span');
+      el.className='cipher-letter';
+      const angle=i*(360/26);
+      el.textContent=ch;
+      el.style.transform=`rotate(${angle}deg) translateY(-${radius}px) rotate(${-angle}deg)`;
+      ring.appendChild(el);
+    });
+  }
+  populate(outer,190);
+  populate(inner,135);
+
+  window.cipherShift=0;
+  window.rotateCipher=function(dir){
+    window.cipherShift=(window.cipherShift+dir+26)%26;
+    const deg=window.cipherShift*(360/26);
+    inner.style.transform=`translate(-50%,-50%) rotate(${deg}deg)`;
+    document.getElementById('cipherShift').textContent=String(window.cipherShift).padStart(2,'0');
+
+    const words=["MOON","DUSK","MIST","GLOW","HAZE","STAR","DAWN","WAVE","WIND","RAIN","SNOW","FIRE","DARK","LAMP","BEAM","HALO","NOVA","TIDE","VEIL","ECHO","AURA","SOUL","TIME","PATH","RING","VOID"];
+    const out=words[window.cipherShift];
+    document.getElementById('cipherOutput').textContent=out;
+    const wrap=document.querySelector('#sc .cipher-wrap');
+    if(wrap) wrap.classList.toggle('cipher-detent', window.cipherShift===5);
+  };
+})();
+
+window.sudokuWrongAttempts=0; window.sudokuLocked=false;
+function judgeSudoku(inputId,correct,msgId,nextId,codeId,note){
+ if(window.sudokuLocked)return;
+ const v=(document.getElementById(inputId)?.value||'').trim();
+ if(v===correct){window.sudokuWrongAttempts=0;judge(inputId,correct,msgId,nextId,codeId,note);return;}
+ window.sudokuWrongAttempts++; judge(inputId,correct,msgId,nextId,codeId,note);
+ if(window.sudokuWrongAttempts>=3)triggerSudokuPenalty(inputId);
+}
+function triggerSudokuPenalty(inputId){
+ window.sudokuLocked=true;window.sudokuWrongAttempts=0;
+ const input=document.getElementById(inputId),c2=document.getElementById('c2');
+ const btn=c2?.querySelector('button[onclick*="judgeSudoku"]'),ov=document.getElementById('sudokuPenalty');
+ if(input)input.disabled=true;if(btn)btn.disabled=true;if(ov){ov.classList.add('show');ov.setAttribute('aria-hidden','false');}
+ let remain=30,c=document.getElementById('sudokuLockSeconds');if(c)c.textContent=remain;
+ const timer=setInterval(()=>{remain--;if(c)c.textContent=Math.max(remain,0);if(remain<=0){clearInterval(timer);window.sudokuLocked=false;if(input)input.disabled=false;if(btn)btn.disabled=false;if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true');}input?.focus();}},1000);
+}
+
+function judgeSecurityD(){
+  const input=document.getElementById('aSecD');
+  const msg=document.getElementById('mSecD');
+  const value=(input?.value || '').trim().toUpperCase();
+
+  if(value !== 'ARTS'){
+    if(typeof judge==='function'){
+      judge('aSecD','ARTS','mSecD','final','D');
+    }
+    return;
+  }
+
+  if(msg){
+    msg.textContent='SECURITY D // RELEASED';
+    msg.className='status ok';
+  }
+
+  const dlg=document.getElementById('narcyArtsDialogue');
+  if(dlg){
+    dlg.hidden=false;
+    dlg.style.display='flex';
+    dlg.classList.add('show');
+  }
+
+  setTimeout(()=>{
+    if(dlg){
+      dlg.classList.remove('show');
+      dlg.style.display='none';
+      dlg.hidden=true;
+    }
+    if(typeof judge==='function'){
+      judge('aSecD','ARTS','mSecD','final','D');
+    }else if(typeof showScreen==='function'){
+      showScreen('final');
+    }
+  },2200);
+}
+
+
+(function(){
+  const dlg=document.getElementById('narcyArtsDialogue');
+  if(dlg){
+    dlg.hidden=true;
+    dlg.style.display='none';
+    dlg.classList.remove('show');
+  }
+})();
+
+let finalRoute31=[];
+function resetFinalRoute31(message){
+ finalRoute31=[];
+ document.querySelectorAll('#final .node31').forEach(n=>n.classList.remove('selected31','wrong31'));
+ const p=document.getElementById('routePoly31'); if(p) p.classList.remove('show31');
+ const a=document.getElementById('answerMemory31'); if(a) a.classList.remove('show31');
+ const r=document.getElementById('finalReveal31'); if(r){r.hidden=true;r.style.display='none';}
+ const input=document.getElementById('aFinal'),btn=document.getElementById('finalAuthBtn'); if(input) input.disabled=true;if(btn)btn.disabled=true;
+ const st=document.getElementById('routeStatus31');if(st)st.textContent=message||'ROUTE // 認証対象から4地点を選択せよ　　選択：0 / 4';
+}
+function selectFinalNode31(el){
+ const id=el.dataset.id;
+ if(el.classList.contains('selected31')){
+   el.classList.remove('selected31'); finalRoute31=finalRoute31.filter(x=>x!==id);
+ }else{
+   if(finalRoute31.length>=4)return;
+   el.classList.add('selected31'); finalRoute31.push(id);
+ }
+ const st=document.getElementById('routeStatus31');if(st)st.textContent=`ROUTE // 認証対象から4地点を選択せよ　　選択：${finalRoute31.length} / 4`;
+}
+function checkFinalRoute31(){
+ const st=document.getElementById('routeStatus31');
+ if(finalRoute31.length!==4){if(st)st.textContent='ROUTE // 4地点を選択してから解析してください。';return;}
+ const expected=['A3a','R4a','T2a','S1a'];
+ const ok=expected.every((id,i)=>finalRoute31[i]===id);
+ if(!ok){
+   document.querySelectorAll('#final .node31.selected31').forEach(n=>n.classList.add('wrong31'));
+   if(st)st.textContent='ROUTE ERROR // 条件を満たす経路ではありません。';
+   setTimeout(()=>resetFinalRoute31('ROUTE // 再解析可能　　4つの認証記録を重ねて考えよ。'),900);return;
+ }
+ if(st)st.textContent='ROUTE RESTORED // MEMORY SIGNAL DETECTED';
+ const p=document.getElementById('routePoly31');if(p)p.classList.add('show31');
+ const a=document.getElementById('answerMemory31');if(a)a.classList.add('show31');
+ const r=document.getElementById('finalReveal31');if(r){r.hidden=false;r.style.display='block';}
+ const input=document.getElementById('aFinal'),btn=document.getElementById('finalAuthBtn');if(input)input.disabled=false;if(btn)btn.disabled=false;
+}
+
+
+
+let selectedMemories35=[];
+function selectMemory35(el){
+ const id=el.dataset.id;
+ if(el.classList.contains('selected35')){el.classList.remove('selected35');selectedMemories35=selectedMemories35.filter(x=>x!==id);}
+ else{if(selectedMemories35.length>=5)return;el.classList.add('selected35');selectedMemories35.push(id);}
+ const st=document.getElementById('memoryStatus35');if(st)st.textContent=`MEMORY // 月光の届かない記憶を5つ選択せよ　　選択：${selectedMemories35.length} / 5`;
+}
+function resetMemories35(msg){selectedMemories35=[];document.querySelectorAll('#final .memory35').forEach(n=>n.classList.remove('selected35','wrong35'));const st=document.getElementById('memoryStatus35');if(st)st.textContent=msg||'MEMORY // 月光の届かない記憶を5つ選択せよ　　選択：0 / 5';}
+function checkMemories35(){
+ const st=document.getElementById('memoryStatus35');
+ if(selectedMemories35.length!==5){if(st)st.textContent='MEMORY // 5つ選択してから解析してください。';return;}
+ const expected=['02','05','07','09','13'];
+ const ok=expected.every(id=>selectedMemories35.includes(id));
+ if(!ok){document.querySelectorAll('#final .memory35.selected35').forEach(n=>n.classList.add('wrong35'));if(st)st.textContent='MEMORY ERROR // 月光の経路を再確認してください。';setTimeout(()=>resetMemories35('MEMORY // 再解析可能　　光が最後まで届いているか確認せよ。'),900);return;}
+ if(st)st.textContent='MEMORY RESTORED // 5 SIGNALS RECOVERED';
+ const r=document.getElementById('memoryReveal35');if(r){r.hidden=false;r.style.display='block';}
+ const input=document.getElementById('aFinal'),btn=document.getElementById('finalAuthBtn');if(input)input.disabled=false;if(btn)btn.disabled=false;
+}
+
+let finalStage37=1;
+let returnedKaguya39=0;
+function returnKaguya39(el){
+ if(finalStage37!==2 || !el || el.classList.contains('returned39')) return;
+ el.classList.add('returned39');
+ returnedKaguya39++;
+ const st=document.getElementById('return39Status');
+ if(returnedKaguya39<5){if(st)st.textContent=`RETURN // 姫を月へ返してください　${returnedKaguya39} / 5`;return;}
+ document.querySelectorAll('#return39Row .return39-char[data-remain="1"]').forEach(n=>n.classList.add('remain39'));
+ if(st){st.textContent='LUNAR RETURN // COMPLETE　残された記録を読め。';st.classList.add('done39');}
+ const input=document.getElementById('aFinal'),btn=document.getElementById('finalAuthBtn');
+ if(input){input.disabled=false;input.value='';input.placeholder='残された記録を入力';input.focus();}
+ if(btn){btn.disabled=false;btn.textContent='FINAL AUTHENTICATION';}
+}
+function judgeFinal37(){
+ const input=document.getElementById('aFinal'); const msg=document.getElementById('mFinal');
+ const value=(input?.value||'').trim().replace(/\s+/g,'');
+ if(finalStage37===1){
+   const ok=value==='かぐやひめ'||value==='かぐや姫';
+   if(!ok){if(msg){msg.textContent='AUTHENTICATION FAILED // KEYWORDを再確認してください';msg.className='status ng';}return;}
+   finalStage37=2; returnedKaguya39=0;
+   if(msg){msg.textContent='KEYWORD ACCEPTED // FINAL AUTHENTICATION INCOMPLETE';msg.className='status ok';}
+   const panel=document.getElementById('finalStage237'); if(panel){panel.hidden=false;panel.style.display='block';}
+   const board=document.querySelector('#final .shadow35-board'); if(board) board.classList.add('stage2-active37');
+   const note=document.querySelector('#final .shadow35-note'); if(note) note.innerHTML='SYSTEM // <b>「かぐやひめ」を月へ返し、残された記録を読め。</b>';
+   const lab=document.getElementById('finalInputLabel37'); if(lab) lab.textContent='FINAL CODE';
+   if(input){input.value='';input.placeholder='姫を月へ返してください';input.disabled=true;}
+   const btn=document.getElementById('finalAuthBtn'); if(btn){btn.textContent='FINAL AUTHENTICATION';btn.disabled=true;}
+   return;
+ }
+ const ok=value==='おだんごかえせ'||value==='お団子かえせ'||value==='お団子返せ'||value==='おだんご返せ';
+ if(!ok){if(msg){msg.textContent='FINAL AUTHENTICATION FAILED // 残された記録を再確認してください';msg.className='status ng';}return;}
+ if(msg){msg.textContent='FINAL CODE ACCEPTED // ONE LAST CHECK';msg.className='status ok';}
+ if(input) input.disabled=true; const btn=document.getElementById('finalAuthBtn'); if(btn) btn.disabled=true;
+ const kage=document.getElementById('kageFinalCheck'); if(kage){kage.hidden=false;kage.style.display='flex';requestAnimationFrame(()=>kage.classList.add('show'));setTimeout(()=>document.getElementById('kageFinalAnswer')?.focus(),250);}
+}
+function judgeKageFinal(){
+ const input=document.getElementById('kageFinalAnswer');
+ const msg=document.getElementById('kageFinalMsg');
+ const value=(input?.value||'').trim().replace(/\s+/g,'');
+ if(value!=='ナルシスト'){if(msg){msg.textContent='……違います。もう一度、よく考えてください。';msg.className='kage-final-msg ng';}return;}
+ if(msg){msg.textContent='……正解です。やっと言えました。';msg.className='kage-final-msg ok';}
+ if(input)input.disabled=true; const b=document.getElementById('kageFinalBtn');if(b)b.disabled=true;
+ setTimeout(()=>{
+  const kage=document.getElementById('kageFinalCheck');if(kage){kage.classList.remove('show');setTimeout(()=>{kage.hidden=true;kage.style.display='none';},220);}
+  const overlay=document.getElementById('finalRestoreOverlay'); if(overlay){overlay.hidden=false;overlay.style.display='flex';requestAnimationFrame(()=>overlay.classList.add('show'));}
+ },900);
+}
+(function(){const overlay=document.getElementById('finalRestoreOverlay'); if(overlay){overlay.hidden=true;overlay.style.display='none';overlay.classList.remove('show');}})();
+</script>
+
+<div id="sudokuPenalty" class="penalty-overlay" aria-hidden="true"><div class="penalty-panel"><div class="penalty-alert">⚠ SECURITY ALERT</div><h2>不正な認証試行を検知</h2><p>連続した認証失敗を確認しました。</p><div class="penalty-villain">「ククク……当てずっぽうで突破できると思ったか？」</div><div class="penalty-timer"><span id="sudokuLockSeconds">30</span> SEC</div><small>認証端末を一時ロックしています</small></div></div>
+<div id="narcyArtsDialogue" class="narcy-arts-dialogue" hidden>
+  <div class="narcy-arts-box">
+    <div class="narcy-arts-name">月光卿ナル・シー</div>
+    <p>「私の美しさはまさしくARTS・・・芸術品さ！」</p>
+  </div>
+</div>
+
+<div id="kageFinalCheck" class="kage-final-check" hidden>
+  <div class="kage-final-panel">
+    <img src="assets/kage_final.png" alt="カゲ" class="kage-final-portrait">
+    <div class="kage-final-name">GEKKO-DAN // KAGE</div>
+    <p class="kage-final-line">「……工場を返す前に、最後にひとつだけ確認させてください。」</p>
+    <div class="kage-final-question"><span>Q.</span> 月光卿ナル・シーは……</div>
+    <div class="kage-final-hint">※自分を特別な存在とみなし、過剰な賞賛や注目を求める「自己陶酔型の人（うぬぼれ屋）」を指します。</div>
+    <input id="kageFinalAnswer" class="kage-final-input" type="text" autocomplete="off" placeholder="答えを入力">
+    <button id="kageFinalBtn" class="kage-final-btn" onclick="judgeKageFinal()">ANSWER</button>
+    <div id="kageFinalMsg" class="kage-final-msg"></div>
+  </div>
+</div>
+
+<div id="finalRestoreOverlay" class="final-restore-overlay" hidden><div class="restore-noise"></div><div class="restore-panel"><div class="restore-line">DANGO PRODUCTION AUTHENTICATION ACCEPTED</div><div class="restore-code">FINAL CODE // ODANGO-KAESE</div><div class="restore-moon" aria-hidden="true"></div><div class="restore-line danger">GEKKODAN SYSTEM // CONTROL LOST</div><div class="restore-security"><span>SECURITY A <b>OFFLINE</b></span><span>SECURITY B <b>OFFLINE</b></span><span>SECURITY C <b>OFFLINE</b></span><span>SECURITY D <b>OFFLINE</b></span></div><div class="restore-main">N/S/R FACTORY SYSTEM<br><strong>RESTORED</strong></div><div class="restore-jp">工場システムの復旧に成功しました</div><div class="clear-report"><div class="clear-report-title">クリア報告を送信してください</div><div class="clear-report-note">チームの代表者1名が、下のボタンからGoogleフォームを送信してください。<br>表彰順位はフォームの回答送信時刻をもとに確認します。<br><b>同じチームから複数回送信しないでください。</b></div><a class="clear-report-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSf7CNu3aX8-7uDPix7UujvDcyv-BGsQpqpaYs7zzYu7R24PkA/viewform?usp=dialog" target="_blank" rel="noopener noreferrer">クリア報告を送信する</a></div></div></div>
+
+<style>
+.final-cipher .cipher-locks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.final-cipher .cipher-lock{border:1px solid rgba(125,211,252,.28);background:rgba(5,12,28,.78);padding:14px;border-radius:12px;text-align:left}.final-cipher .cipher-lock b{color:#7dd3fc;letter-spacing:.08em}.final-cipher .cipher-lock p{min-height:3em;margin:8px 0 10px}.final-cipher .cipher-lock label{font-size:.72rem;opacity:.7}.final-cipher .cipher-lock input{margin:5px 0 8px}.final-cipher .cipher-lock button{margin:0;padding:8px 12px}.final-cipher .cipher-result{display:block;margin-top:8px;font-size:.82rem;opacity:.78}.final-cipher .cipher-lock.cleared{border-color:rgba(74,222,128,.7);box-shadow:0 0 18px rgba(74,222,128,.12)}.final-cipher .cipher-result.ok{color:#86efac}.final-cipher .cipher-result.ng{color:#fca5a5}.cipher-final{margin-top:18px;padding:16px;border:1px solid rgba(250,204,21,.4);border-radius:14px;background:rgba(30,25,5,.55)}.cipher-fragments{display:flex;justify-content:center;gap:10px;margin:14px 0}.cipher-fragments span{display:grid;place-items:center;width:46px;height:46px;border:1px solid rgba(250,204,21,.55);border-radius:9px;font-size:1.5rem;font-weight:800;background:rgba(0,0,0,.28)}@media(max-width:680px){.final-cipher .cipher-locks{grid-template-columns:1fr}.final-cipher .cipher-lock p{min-height:0}.cipher-fragments{gap:6px}.cipher-fragments span{width:40px;height:40px}}
+</style>
+
+<style>
+/* FINAL v24.28 — same-board second solve */
+#final .hidden-moon{position:relative;display:inline-block}
+#final .hidden-moon::before{content:"☾";position:absolute;left:50%;top:-1.05em;transform:translateX(-50%);font-size:.50em;color:#cbd5e1;opacity:.42;text-shadow:0 0 4px rgba(203,213,225,.28);transition:.25s ease;pointer-events:none}
+#final .beam-grid.reanalysis .hidden-moon::before{opacity:.42;color:#cbd5e1;text-shadow:0 0 4px rgba(203,213,225,.28)}
+#final .beam-grid.reanalysis{box-shadow:0 0 0 1px rgba(125,211,252,.14),0 0 24px rgba(125,211,252,.06);border-radius:10px}
+#final .final-stage2{max-width:720px;padding:10px 14px;background:rgba(125,211,252,.045);border-color:rgba(125,211,252,.25)}
+#final .stage2-command{margin:0;font-size:.86rem;font-weight:600;opacity:.82}
+</style>
+
+<style>
+/* FINAL v24.31 — LUNAR ARCHIVE */
+.final-archive31 .archive31-note{margin:14px auto;padding:11px 14px;max-width:760px;border-left:3px solid #facc15;background:rgba(250,204,21,.06);font-size:.92rem}.archive31-records{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.archive31-records span{padding:10px 8px;border:1px solid rgba(125,211,252,.25);border-radius:9px;background:rgba(3,10,24,.72);text-align:center}.archive31-records small{display:block;font-size:.62rem;opacity:.58;letter-spacing:.08em}.archive31-records b{display:block;margin-top:3px;color:#fef08a;letter-spacing:.12em}.lunar-map31{padding:12px;border:1px solid rgba(125,211,252,.28);border-radius:14px;background:radial-gradient(circle at 50% 45%,rgba(32,55,76,.68),rgba(3,10,24,.96) 66%);overflow:hidden}.map31-head{display:flex;justify-content:space-between;color:#7dd3fc;font-size:.72rem;letter-spacing:.09em;margin-bottom:5px}.lunar-map31 svg{width:100%;height:auto;display:block;touch-action:manipulation}.terrain31 circle{fill:none;stroke:rgba(148,163,184,.09);stroke-width:10}.edges31 line{stroke:rgba(148,163,184,.28);stroke-width:2}.node31{cursor:pointer}.node31 circle{fill:#0b1628;stroke:rgba(203,213,225,.58);stroke-width:2}.node31 .crater-rim31{fill:none;stroke:rgba(148,163,184,.52);stroke-width:1.4;pointer-events:none}.node31 .crater-scar31{fill:none;stroke:rgba(148,163,184,.45);stroke-width:1.2;pointer-events:none}.node31:hover circle{stroke:#fef08a}.node31 text{text-anchor:middle;pointer-events:none;font-family:monospace}.letter31{fill:#93c5fd;font-size:13px;font-weight:800}.num31{fill:#f8fafc;font-size:17px;font-weight:900}.mark31{fill:#fde047;font-size:18px;filter:url(#glow31)}.node31.selected31 circle{stroke:#facc15;stroke-width:4;filter:url(#glow31)}.node31.wrong31 circle{stroke:#fb7185;stroke-width:4}.route-poly31{fill:rgba(250,204,21,.00);stroke:rgba(250,204,21,0);stroke-width:4;transition:.6s}.route-poly31.show31{fill:rgba(250,204,21,.06);stroke:#facc15;filter:url(#glow31)}.answer-memory31{opacity:0;transition:.8s;pointer-events:none}.answer-memory31.show31{opacity:1}.phase31{font-size:18px;text-anchor:middle}.kana31{font-size:18px;font-weight:900;fill:#fff;text-anchor:middle}.route-status31{margin-top:4px;padding:9px;border-top:1px dashed rgba(125,211,252,.24);font-family:monospace;font-size:.8rem;color:#cbd5e1}.final-reveal31{margin:9px auto 2px;padding:9px 12px;border:1px solid rgba(250,204,21,.32);background:rgba(250,204,21,.06);max-width:560px;text-align:center}.final-reveal31[hidden]{display:none!important}@media(max-width:650px){.archive31-records{grid-template-columns:repeat(2,1fr)}.map31-head{font-size:.62rem}.lunar-map31{padding:7px}.letter31{font-size:16px}.num31{font-size:19px}}
+</style>
+
+
+<style>
+/* FINAL v24.33 — multi-condition network */
+#final .node31.selected31 circle{stroke:#e2e8f0!important;stroke-width:3!important;filter:none!important}
+#final .node31.selected31 .letter31,#final .node31.selected31 .num31{fill:#fff}
+#final .route-check31{display:block;width:min(320px,90%);margin:10px auto 4px;padding:10px 16px}
+#final .answer-memory31{opacity:0}
+#final .answer-memory31.show31{opacity:1}
+#final .route-poly31.show31{fill:rgba(250,204,21,.045);stroke:#facc15;filter:url(#glow31)}
+@media(max-width:650px){#final .node31 circle{stroke-width:2.4}.route-check31{font-size:.9rem}}
+</style>
+<style>
+.kage-final-hint{max-width:720px;margin:12px auto 16px;padding:10px 14px;border-left:3px solid rgba(125,211,252,.7);background:rgba(125,211,252,.07);color:#b9c8dc;font-size:.88rem;line-height:1.65;text-align:left}
+</style>
+</body>
+</html><style>
+/* FINAL v24.20 — orbit position specificity fix */
+#final .moon-orbit-wrap .final-node{
+  left:44.25% !important;
+  top:44.25% !important;
+}
+@media(max-width:650px){
+  #final .moon-orbit-wrap .final-node{
+    left:43.75% !important;
+    top:43.75% !important;
+  }
+}
+
+/* FINAL v24.21 — all four security records are required */
+#final .final-node{overflow:hidden}
+#final .final-node b,#final .final-node em{position:relative;z-index:2;font-style:normal}
+#final .final-node em{display:block;font-size:.68em;opacity:.28;margin-top:.1em}
+#final .crater-start .mini-crater{position:absolute;border:1px solid rgba(210,235,255,.5);border-radius:50%;background:rgba(5,18,34,.2);z-index:1}
+#final .crater-start .mc1{width:18%;height:18%;left:18%;top:18%}#final .crater-start .mc2{width:11%;height:11%;right:18%;top:28%}#final .crater-start .mc3{width:14%;height:14%;left:28%;bottom:15%}
+.final-system-note{margin:14px auto 4px;padding:10px 14px;max-width:760px;border:1px solid rgba(110,210,230,.25);background:rgba(0,30,45,.28);font-size:.86rem;letter-spacing:.06em}
+.final-filter,.final-arts-gate{margin:18px auto 0;padding:16px;max-width:720px;border:1px solid rgba(104,217,231,.35);background:rgba(5,22,40,.72)}
+.filter-buttons{display:flex;gap:12px;justify-content:center;margin-top:12px}.filter-buttons button,.final-arts-gate button{width:auto;min-width:140px;margin:8px}
+.final-arts-gate input{max-width:320px;margin:12px auto;display:block}
+</style>
+
+<style>
+/* FINAL v24.22 — no answer characters before all four records are used */
+#final .final-node b{font-size:.86em;letter-spacing:.02em}
+#final .final-node em{font-size:.62em;opacity:.48}
+.final-extracted{margin:14px auto 2px;padding:12px;border:1px dashed rgba(120,230,245,.45);max-width:520px;font-family:monospace;font-weight:700;letter-spacing:.12em}
+.archive-grid{display:grid;grid-template-columns:repeat(5,minmax(54px,1fr));gap:8px;max-width:560px;margin:14px auto 0}
+.archive-grid span{display:flex;gap:6px;align-items:center;justify-content:center;padding:10px 6px;border:1px solid rgba(120,220,235,.3);background:rgba(5,30,45,.5);font-size:1.05rem;font-weight:700}
+.archive-grid i{font-style:normal;font-family:monospace;font-size:.7rem;opacity:.55}
+@media(max-width:600px){.archive-grid{grid-template-columns:repeat(3,1fr)}#final .final-node b{font-size:.72em}#final .final-node em{font-size:.52em}}
+
+/* FINAL v24.25 — fifteen moonlight records */
+.final-beam-puzzle .beam-console{margin-top:18px;padding:16px;border:1px solid rgba(125,211,252,.28);border-radius:14px;background:rgba(3,10,24,.78)}
+.beam-console-top{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;letter-spacing:.09em;color:#7dd3fc;margin-bottom:10px}.beam-help{padding:10px 12px;border-left:3px solid rgba(250,204,21,.65);background:rgba(250,204,21,.06);font-size:.92rem;line-height:1.65;margin-bottom:14px}.beam-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.beam-card{position:relative;display:grid;grid-template-columns:20px 1fr auto;align-items:center;gap:7px;min-height:46px;padding:8px 10px;border:1px solid rgba(148,163,184,.2);border-radius:9px;background:rgba(0,0,0,.22);overflow:hidden}.moon-src{color:#fef08a;text-shadow:0 0 10px rgba(254,240,138,.8);font-size:.8rem}.beam-card i{height:2px;background:linear-gradient(90deg,rgba(254,240,138,.9),rgba(254,240,138,.25));box-shadow:0 0 8px rgba(254,240,138,.28)}.beam-word{font-weight:700;letter-spacing:.05em;white-space:nowrap}.blocker{position:absolute;left:46%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:2px;padding:1px 3px;border-radius:7px;background:#08101f;box-shadow:0 0 0 2px #08101f,0 0 10px rgba(0,0,0,.75);font-size:1.02rem;z-index:2}.blocker b{display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#facc15;color:#111827;font-size:.62rem}.beam-card.blocked i{background:linear-gradient(90deg,rgba(254,240,138,.9) 0 43%,rgba(254,240,138,.06) 48% 100%)}.beam-system-note{margin-top:14px;text-align:center;font-size:.82rem;opacity:.72;letter-spacing:.04em}@media(max-width:760px){.beam-grid{grid-template-columns:1fr 1fr}.beam-card{min-height:44px}.beam-word{font-size:.9rem}}@media(max-width:480px){.beam-grid{grid-template-columns:1fr}.beam-card{grid-template-columns:18px 1fr auto}.blocker{left:45%}}
+
+/* FINAL v24.27 — two-stage lunar memory */
+.final-intermediate{margin:16px auto 0;padding:14px;max-width:720px;border-top:1px dashed rgba(125,211,252,.28)}
+.final-intermediate label{display:block;margin-bottom:8px;font-size:.76rem;letter-spacing:.12em;color:#7dd3fc}.intermediate-row{display:flex;gap:8px;align-items:center}.intermediate-row input{margin:0;flex:1}.intermediate-row button{margin:0;width:auto;white-space:nowrap}.final-stage2{margin:16px auto 0;padding:16px;max-width:620px;border:1px solid rgba(250,204,21,.35);border-radius:12px;background:rgba(250,204,21,.045)}.stage2-head{font-size:.76rem;letter-spacing:.12em;color:#facc15;margin-bottom:8px}.stage2-command{text-align:center;font-weight:700;margin-bottom:12px}.vertical-memory{display:grid;grid-template-columns:1fr;gap:7px;max-width:360px;margin:0 auto}.vertical-memory div{display:grid;grid-template-columns:42px 1fr 38px;align-items:center;padding:9px 12px;border:1px solid rgba(148,163,184,.22);border-radius:8px;background:rgba(0,0,0,.22)}.vertical-memory span{font-family:monospace;opacity:.55}.vertical-memory b{text-align:center;letter-spacing:.12em}.vertical-memory em{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#facc15;color:#111827;font-weight:900}.stage2-note{text-align:center;margin-top:11px;font-size:.82rem;opacity:.72}@media(max-width:600px){.intermediate-row{flex-direction:column}.intermediate-row button{width:100%}}
+</style>
+
+<style>
+/* FINAL v24.30 — nine-beam command + deterministic left-edge vertical read */
+#final .blocker small{font-size:.43rem;letter-spacing:.03em;color:#fde68a;font-weight:800}
+#final .hidden-moon{position:relative;display:inline-block}
+#final .hidden-moon::before{content:"☾";position:absolute;left:50%;transform:translateX(-50%);top:-1.15em;font-size:.62em;color:rgba(254,240,138,.34);text-shadow:0 0 5px rgba(254,240,138,.12);font-weight:400}
+@media(max-width:480px){#final .blocker small{font-size:.39rem}}
+</style>
