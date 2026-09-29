@@ -1953,7 +1953,7 @@ button.busy{pointer-events:none;opacity:.62}
   <span class="tag">CHALLENGE 03 // FACTORY RESTORATION</span><h1>第三製造ライン</h1>
       <div class="dialogue character-dialogue" data-character="ナル・シー"><img class="char-portrait" src="assets/naru_c_final.png" alt="ナル・シーのシルエット"><b class="char-name">ナル・シー</b><br>「フハハハハ！よくぞここまで来た、諸君！もっと近くで見ても構わんぞ？月光に照らされた私の横顔をな！」</div>
   <div class="challenge">
-      <b>隠れた部分に当てはまる文字を答えよ。</b>
+      <b>隠れた部分に当てはまる答えを導け。<br>問題に対する答えを、単位も含めひらがなで回答すべし。</b>
       <div class="ch3-image-wrap">
         <img src="assets/challenge03_puzzle_only.png"
              alt="CHALLENGE 03 隠された文字の謎"
@@ -1966,7 +1966,24 @@ button.busy{pointer-events:none;opacity:.62}
     </div>
     <label>解除コード</label><input id="a3" placeholder="ひらがなで入力">
   <div id="m3" class="status"></div>
-  <button onclick="judge('a3','にきろ','m3','c4',3,'解析方式：五十音変換 2↑')">LOCK解除</button>
+  <button onclick="judge('a3','にきろ','m3','c3clear',3,'解析方式：五十音変換 2↑')">LOCK解除</button>
+</section>
+
+    <section id="c3clear" class="screen" hidden>
+  <div class="factory-header"><b>月光団 SYSTEM</b><span>N/S/R DANGO FACTORY // LINE 03 RESTORED</span></div>
+  <span class="tag">CHALLENGE 03 // RESTORATION COMPLETE</span><h1>第三製造ライン　復旧完了</h1>
+
+  <div class="dialogue character-dialogue" data-character="ヒカリ"><img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット"><b class="char-name">ヒカリ</b><br>「解除されてしまいましたわ！」<br>「……ところで、なぜ突然チョコレートの問題が？」</div>
+
+  <div class="dialogue character-dialogue" data-character="カゲ"><img class="char-portrait" src="assets/kage_final.png" alt="カゲのシルエット"><b class="char-name">カゲ</b><br>「……月光卿が以前、チョコレート工場を視察した際に作った問題です。」</div>
+
+  <div class="dialogue character-dialogue" data-character="ヒカリ"><img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット"><b class="char-name">ヒカリ</b><br>「使い回し！？」</div>
+
+  <div class="dialogue character-dialogue" data-character="カゲ"><img class="char-portrait" src="assets/kage_final.png" alt="カゲのシルエット"><b class="char-name">カゲ</b><br>「本人は『時を超えし知の継承』と呼んでいます。」</div>
+
+  <div class="dialogue character-dialogue" data-character="ヒカリ"><img class="char-portrait" src="assets/hikari_final.png" alt="ヒカリのシルエット"><b class="char-name">ヒカリ</b><br>「使い回しですね。」</div>
+
+  <button onclick="show('c4')">第四製造ラインへ</button>
 </section>
 
     <section id="c4" class="screen" hidden>
@@ -1974,7 +1991,7 @@ button.busy{pointer-events:none;opacity:.62}
   <span class="tag">CHALLENGE 04 // FACTORY RESTORATION</span><h1>第四製造ライン</h1>
   <div class="dialogue character-dialogue" data-character="カゲ"><img class="char-portrait" src="assets/kage_final.png" alt="カゲのシルエット"><b class="char-name">カゲ</b><br>「……まだ続けるんですね。まあ、僕は止めませんけど。困るのはたぶん、僕じゃなくてあの人なので。」</div>
   <div class="challenge">
-      <b>「打野」が表す数字を答えよ。</b>
+      <b>「庭卓野排」が表す数字を答えよ。<br><span class="small"><b>月光卿ナル・シー</b>「我は孤独を愛する男……最小人数を採用せよ！」</span></b>
       <div class="ch4-image-wrap">
         <img src="assets/challenge04_gekkodan.png"
              alt="CHALLENGE 04 満月に記された漢字と数字の謎"
